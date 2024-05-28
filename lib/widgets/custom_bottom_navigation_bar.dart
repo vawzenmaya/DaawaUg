@@ -38,7 +38,8 @@ class CustomBottomNavigationBar extends StatelessWidget {
     );
   }
 
-  Widget _bottomBarNavItem(int index, String label, TextStyle textStyle, String iconName) {
+  Widget _bottomBarNavItem(
+      int index, String label, TextStyle textStyle, String iconName) {
     bool isSelected = selectedPageIndex == index;
     Color iconAndTextColor = isSelected ? Colors.black : Colors.grey;
 
@@ -53,6 +54,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         children: [
           SvgPicture.asset(
             'assets/${isSelected ? '${iconName}_filled' : iconName}.svg',
+            // ignore: deprecated_member_use
             color: iconAndTextColor,
             height: 24,
             width: 24,
@@ -88,5 +90,4 @@ class CustomBottomNavigationBar extends StatelessWidget {
       ),
     );
   }
-
 }

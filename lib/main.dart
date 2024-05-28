@@ -14,10 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Mansor',
-      theme: ThemeData(
-        textTheme: GoogleFonts.varelaRoundTextTheme()
-      ),
+      theme: ThemeData(textTheme: GoogleFonts.varelaRoundTextTheme()),
       home: const NavigationContainer(),
     );
   }
 }
+// Cava

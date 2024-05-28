@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: archive
-      sha256: ecf4273855368121b1caed0d10d4513c7241dfc813f7d3c8933b36622ae9b265
+      sha256: "6bd38d335f0954f5fad9c79e614604fbf03a0e5b975923dd001b6ea965ef5b4b"
       url: "https://pub.dev"
     source: hosted
-    version: "3.5.1"
+    version: "3.6.0"
   args:
     dependency: transitive
     description:
@@ -276,10 +276,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_android
-      sha256: a248d8146ee5983446bf03ed5ea8f6533129a12b11f12057ad1b4a67a2b3b41d
+      sha256: "9c96da072b421e98183f9ea7464898428e764bc0ce5567f27ec8693442e72514"
       url: "https://pub.dev"
     source: hosted
-    version: "2.2.4"
+    version: "2.2.5"
   path_provider_foundation:
     dependency: transitive
     description:
@@ -441,10 +441,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_android
-      sha256: "134e1ad410d67e18a19486ed9512c72dfc6d8ffb284d0e8f2e99e903d1ba8fa3"
+      sha256: "76c3209e47054daaae2cd3636818022c0b1ca3a69ea4b81221ba6c2a43ecb4d2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.14"
+    version: "2.4.15"
   video_player_avfoundation:
     dependency: transitive
     description:
@@ -511,4 +511,4 @@ packages:
     version: "6.5.0"
 sdks:
   dart: ">=3.4.0 <4.0.0"
-  flutter: ">=3.19.2"
+  flutter: ">=3.22.0"
