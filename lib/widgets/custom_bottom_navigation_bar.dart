@@ -79,7 +79,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
         width: 40,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
-            colors: [Colors.blueAccent, Colors.redAccent],
+            colors: [Colors.greenAccent, Colors.lightGreenAccent],
           ),
           borderRadius: BorderRadius.circular(25),
         ),

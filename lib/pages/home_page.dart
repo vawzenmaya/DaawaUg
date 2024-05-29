@@ -67,7 +67,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const Padding(
-              padding: EdgeInsets.fromLTRB(60.0, 0, 0, 0),
+              padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
               child: Icon(
                 Icons.search,
                 color: Colors.white,
