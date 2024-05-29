@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:toktok/auth/forgot_password_email.dart';
 import 'package:toktok/auth/forgot_password_phone.dart';
 import 'package:toktok/auth/signup.dart';
@@ -12,7 +15,9 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _contactController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _isValidContact = false;
   bool isExampleVisible = true;
   final RxBool isObscure = true.obs;
@@ -21,6 +26,28 @@ class _SignInPageState extends State<SignInPage> {
     setState(() {
       isExampleVisible = !isExampleVisible;
     });
+  }
+
+  Future<void> _login() async {
+    final response = await http.post(
+      Uri.parse("https://daawaug.000webhostapp.com/auth/signin.php"),
+      body: {
+        'email': _contactController.text,
+        'password': _passwordController.text,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['status'] == 'success') {
+        Get.to(() => const NavigationContainer());
+      } else {
+        // _showErrorDialog(responseData['message']);
+      }
+    } else {
+      // Handle other status codes or server errors
+      // _showErrorDialog('Login failed with status code: ${response.statusCode}');
+    }
   }
 
   @override
@@ -78,137 +105,172 @@ class _SignInPageState extends State<SignInPage> {
                   ),
                 ],
               ),
-              TextField(
-                controller: _contactController,
-                enabled: isExampleVisible,
-                decoration: const InputDecoration(
-                  labelText: 'Email / Phone Number',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.greenAccent, width: 2.5),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              isExampleVisible
-                  ? const Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Example : 0711888999\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\texample@domain.com',
-                          style: TextStyle(color: Colors.grey),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _contactController,
+                      enabled: isExampleVisible,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your email or phone number';
+                        }
+                        return null;
+                      },
+                      decoration: const InputDecoration(
+                        labelText: 'Email / Phone Number',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
                         ),
-                      ],
-                    )
-                  : Column(children: [
-                      Obx(() => TextField(
-                            obscureText: isObscure.value,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              labelStyle: const TextStyle(color: Colors.grey),
-                              border: const UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.grey),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.greenAccent, width: 2.5),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    isExampleVisible
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Example : 0711888999\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\texample@domain.com',
+                                style: TextStyle(color: Colors.grey),
                               ),
-                              focusedBorder: const UnderlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.greenAccent, width: 2.5),
-                              ),
-                              suffixIcon: InkWell(
-                                onTap: () {
-                                  isObscure.value = !isObscure.value;
-                                },
-                                child: Icon(
-                                  isObscure.value
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: isObscure.value
-                                      ? Colors.grey
-                                      : Colors.greenAccent,
-                                ),
-                              ),
-                            ),
-                          )),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              if (_isValidContact) {
-                                if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                    .hasMatch(_contactController.text.trim())) {
-                                  Get.to(ForgotPasswordPageEmail(
-                                      emailAddress:
-                                          _contactController.text.trim()));
-                                } else if (RegExp(r'^[0-9]{10}$')
-                                    .hasMatch(_contactController.text.trim())) {
-                                  Get.to(ForgotPasswordPagePhone(
-                                      phoneNumber:
-                                          _contactController.text.trim()));
+                            ],
+                          )
+                        : Column(children: [
+                            Obx(() => TextFormField(
+                                  controller: _passwordController,
+                                  obscureText: isObscure.value,
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your password';
+                                    }
+                                    return null;
+                                  },
+                                  decoration: InputDecoration(
+                                    labelText: 'Password',
+                                    labelStyle:
+                                        const TextStyle(color: Colors.grey),
+                                    border: const UnderlineInputBorder(
+                                      borderSide:
+                                          BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: const UnderlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.greenAccent,
+                                          width: 2.5),
+                                    ),
+                                    suffixIcon: InkWell(
+                                      onTap: () {
+                                        isObscure.value = !isObscure.value;
+                                      },
+                                      child: Icon(
+                                        isObscure.value
+                                            ? Icons.visibility_off
+                                            : Icons.visibility,
+                                        color: isObscure.value
+                                            ? Colors.grey
+                                            : Colors.greenAccent,
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    if (_isValidContact) {
+                                      if (RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(
+                                              _contactController.text.trim())) {
+                                        Get.to(ForgotPasswordPageEmail(
+                                            emailAddress: _contactController
+                                                .text
+                                                .trim()));
+                                      } else if (RegExp(r'^[0-9]{10}$')
+                                          .hasMatch(
+                                              _contactController.text.trim())) {
+                                        Get.to(ForgotPasswordPagePhone(
+                                            phoneNumber: _contactController.text
+                                                .trim()));
+                                      }
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Forgot Password?',
+                                    style: TextStyle(color: Colors.greenAccent),
+                                  ),
+                                )
+                              ],
+                            )
+                          ]),
+                    const SizedBox(height: 50),
+                    ElevatedButton(
+                        onPressed: _isValidContact
+                            ? () {
+                                if (!isExampleVisible) {
+                                  if (_formKey.currentState!.validate()) {
+                                    _login();
+                                    if (_isValidContact) {
+                                      if (RegExp(
+                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(
+                                              _contactController.text.trim())) {
+                                        Get.offAll(
+                                            () => const NavigationContainer());
+                                        Get.snackbar(
+                                          'Successfully',
+                                          'Signed in with Email',
+                                          backgroundColor: Colors.grey,
+                                          colorText: Colors.white,
+                                          snackPosition: SnackPosition.TOP,
+                                        );
+                                      } else if (RegExp(r'^[0-9]{10}$')
+                                          .hasMatch(
+                                              _contactController.text.trim())) {
+                                        Get.offAll(
+                                            () => const NavigationContainer());
+                                        Get.snackbar(
+                                          'Successfully',
+                                          'Signed in with Phone Number',
+                                          backgroundColor: Colors.grey,
+                                          colorText: Colors.white,
+                                          snackPosition: SnackPosition.TOP,
+                                        );
+                                      }
+                                    }
+                                  }
+                                } else {
+                                  setState(() {
+                                    isExampleVisible = false;
+                                  });
                                 }
                               }
-                            },
-                            child: const Text(
-                              'Forgot Password?',
-                              style: TextStyle(color: Colors.greenAccent),
-                            ),
-                          )
-                        ],
-                      )
-                    ]),
-              const SizedBox(height: 50),
-              ElevatedButton(
-                  onPressed: _isValidContact
-                      ? () {
-                          if (!isExampleVisible) {
-                            if (_isValidContact) {
-                              if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                  .hasMatch(_contactController.text.trim())) {
-                                Get.offAll(() => const NavigationContainer());
-                                Get.snackbar(
-                                  'Successfully',
-                                  'Signed in with Email',
-                                  backgroundColor: Colors.grey,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.TOP,
-                                );
-                              } else if (RegExp(r'^[0-9]{10}$')
-                                  .hasMatch(_contactController.text.trim())) {
-                                Get.offAll(() => const NavigationContainer());
-                                Get.snackbar(
-                                  'Successfully',
-                                  'Signed in with Phone Number',
-                                  backgroundColor: Colors.grey,
-                                  colorText: Colors.white,
-                                  snackPosition: SnackPosition.TOP,
-                                );
-                              }
-                            }
-                          } else {
-                            setState(() {
-                              isExampleVisible = false;
-                            });
-                          }
-                        }
-                      : () {},
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: _isValidContact
-                        ? Colors.greenAccent
-                        : const Color.fromARGB(255, 221, 221, 221),
-                  ),
-                  child: Text(
-                    isExampleVisible ? 'Next' : 'Login',
-                    style: TextStyle(
-                      color: _isValidContact ? Colors.white : Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  )),
+                            : () {},
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          backgroundColor: _isValidContact
+                              ? Colors.greenAccent
+                              : const Color.fromARGB(255, 221, 221, 221),
+                        ),
+                        child: Text(
+                          isExampleVisible ? 'Next' : 'Login',
+                          style: TextStyle(
+                            color: _isValidContact ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        )),
+                  ],
+                ),
+              ),
               const SizedBox(height: 50),
               const Text(
                 'Or sign in with',
