@@ -28,36 +28,32 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _register() async {
     final response = await http.post(
-      Uri.parse("https://daawaug.000webhostapp.com/auth/checkusers.php"),
+      Uri.parse("https://daawaug.000webhostapp.com/auth/checkuser.php"),
       body: {
-        'inputType': _isValidContact ? 'email' : 'phoneNumber',
-        'value': _contactController.text,
+        'email': _contactController.text,
+        'phoneNumber': _contactController.text,
       },
     );
 
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
-      if (responseData['status'] == 'errorEmail') {
+      if (responseData['status'] == 'error') {
         Get.snackbar(
           'User already exists',
-          'This email is already registered',
+          'This credential is already registered',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 5),
         );
-      } else if (responseData['status'] == 'errorPhone') {
-        Get.snackbar(
-          'User already exists',
-          'This phone number is already registered',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-        );
-      } else if (responseData['status'] == 'successEmail') {
-        Get.to(RegisterEmail(emailAddress: _contactController.text));
-      } else if (responseData['status'] == 'successPhone') {
-        Get.to(RegisterPhone(phoneNumber: _contactController.text));
+      } else if (responseData['status'] == 'success') {
+        if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+            .hasMatch(_contactController.text.trim())) {
+          Get.to(RegisterEmail(emailAddress: _contactController.text.trim()));
+        } else if (RegExp(r'^[0-9]{10}$')
+            .hasMatch(_contactController.text.trim())) {
+          Get.to(RegisterPhone(phoneNumber: _contactController.text.trim()));
+        }
       }
     } else {
       Get.snackbar(
