@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +9,7 @@ import 'package:toktok/navigation_container.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
+
   @override
   State<SignInPage> createState() => _SignInPageState();
 }
@@ -33,6 +33,7 @@ class _SignInPageState extends State<SignInPage> {
       Uri.parse("https://daawaug.000webhostapp.com/auth/signin.php"),
       body: {
         'email': _contactController.text,
+        'phoneNumber': _contactController.text,
         'password': _passwordController.text,
       },
     );
@@ -40,13 +41,32 @@ class _SignInPageState extends State<SignInPage> {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status'] == 'success') {
-        Get.to(() => const NavigationContainer());
-      } else {
-        // _showErrorDialog(responseData['message']);
+        Get.offAll(() => const NavigationContainer());
+        Get.snackbar(
+          'Successfully',
+          'Signed In',
+          backgroundColor: Colors.grey,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
+      } else if (responseData['status'] == 'error') {
+        Get.snackbar(
+          'Please try again',
+          'Invalid credentials',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
       }
     } else {
-      // Handle other status codes or server errors
-      // _showErrorDialog('Login failed with status code: ${response.statusCode}');
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 
@@ -213,61 +233,34 @@ class _SignInPageState extends State<SignInPage> {
                           ]),
                     const SizedBox(height: 50),
                     ElevatedButton(
-                        onPressed: _isValidContact
-                            ? () {
-                                if (!isExampleVisible) {
-                                  if (_formKey.currentState!.validate()) {
-                                    _login();
-                                    if (_isValidContact) {
-                                      if (RegExp(
-                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                          .hasMatch(
-                                              _contactController.text.trim())) {
-                                        Get.offAll(
-                                            () => const NavigationContainer());
-                                        Get.snackbar(
-                                          'Successfully',
-                                          'Signed in with Email',
-                                          backgroundColor: Colors.grey,
-                                          colorText: Colors.white,
-                                          snackPosition: SnackPosition.TOP,
-                                        );
-                                      } else if (RegExp(r'^[0-9]{10}$')
-                                          .hasMatch(
-                                              _contactController.text.trim())) {
-                                        Get.offAll(
-                                            () => const NavigationContainer());
-                                        Get.snackbar(
-                                          'Successfully',
-                                          'Signed in with Phone Number',
-                                          backgroundColor: Colors.grey,
-                                          colorText: Colors.white,
-                                          snackPosition: SnackPosition.TOP,
-                                        );
-                                      }
-                                    }
-                                  }
-                                } else {
-                                  setState(() {
-                                    isExampleVisible = false;
-                                  });
+                      onPressed: _isValidContact
+                          ? () {
+                              if (!isExampleVisible) {
+                                if (_formKey.currentState!.validate()) {
+                                  _login();
                                 }
+                              } else {
+                                setState(() {
+                                  isExampleVisible = false;
+                                });
                               }
-                            : () {},
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                          backgroundColor: _isValidContact
-                              ? Colors.greenAccent
-                              : const Color.fromARGB(255, 221, 221, 221),
+                            }
+                          : () {},
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 50),
+                        backgroundColor: _isValidContact
+                            ? Colors.greenAccent
+                            : const Color.fromARGB(255, 221, 221, 221),
+                      ),
+                      child: Text(
+                        isExampleVisible ? 'Next' : 'Login',
+                        style: TextStyle(
+                          color: _isValidContact ? Colors.white : Colors.grey,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
-                        child: Text(
-                          isExampleVisible ? 'Next' : 'Login',
-                          style: TextStyle(
-                            color: _isValidContact ? Colors.white : Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        )),
+                      ),
+                    ),
                   ],
                 ),
               ),
