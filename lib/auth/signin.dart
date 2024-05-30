@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/forgot_password_email.dart';
 import 'package:toktok/auth/forgot_password_phone.dart';
 import 'package:toktok/auth/signup.dart';
@@ -30,7 +31,7 @@ class _SignInPageState extends State<SignInPage> {
 
   Future<void> _login() async {
     final response = await http.post(
-      Uri.parse("https://daawaug.000webhostapp.com/auth/signin.php"),
+      Uri.parse(ApiConfig.signinUrl),
       body: {
         'email': _contactController.text,
         'phoneNumber': _contactController.text,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
 import 'package:toktok/navigation_container.dart';
 
@@ -16,7 +17,7 @@ class RegisterFinishEmail extends StatelessWidget {
 
   Future<void> _signUp() async {
     final response = await http.post(
-      Uri.parse("https://daawaug.000webhostapp.com/auth/signup_with_email.php"),
+      Uri.parse(ApiConfig.signupWithEmailUrl),
       body: {
         'email': _contactController.text,
         'username': _usernameController.text,

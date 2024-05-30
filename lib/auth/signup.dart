@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/register_email.dart';
 import 'package:toktok/auth/register_phone.dart';
 import 'package:toktok/auth/signin.dart';
@@ -28,7 +29,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> _register() async {
     final response = await http.post(
-      Uri.parse("https://daawaug.000webhostapp.com/auth/checkuser.php"),
+      Uri.parse(ApiConfig.checkUserUrl),
       body: {
         'email': _contactController.text,
         'phoneNumber': _contactController.text,
