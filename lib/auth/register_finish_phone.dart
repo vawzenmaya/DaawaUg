@@ -165,6 +165,7 @@ class RegisterFinishPhone extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Obx(() => TextFormField(
+                          controller: _passwordController,
                           obscureText: isObscure.value,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
