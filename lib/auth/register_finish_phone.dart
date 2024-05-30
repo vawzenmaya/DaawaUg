@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
 import 'package:toktok/navigation_container.dart';
@@ -39,6 +40,8 @@ class RegisterFinishPhone extends StatelessWidget {
           );
           break;
         case 'registration_successful':
+          setLoggedIn();
+          saveUserName(_usernameController.text);
           Get.offAll(() => const NavigationContainer());
           Get.snackbar(
             'Successfully',
@@ -70,7 +73,6 @@ class RegisterFinishPhone extends StatelessWidget {
           );
       }
     } else {
-      // Handle registration failure due to server error
       Get.snackbar(
         'Error',
         'Failed to register. Please try again later.',
@@ -80,6 +82,16 @@ class RegisterFinishPhone extends StatelessWidget {
         duration: const Duration(seconds: 5),
       );
     }
+  }
+
+  Future<void> saveUserName(String username) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userName', username);
+  }
+
+  Future<void> setLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
   }
 
   RegisterFinishPhone({super.key, required this.phoneNumber}) {

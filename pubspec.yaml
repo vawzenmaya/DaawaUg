@@ -47,6 +47,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   pin_code_text_field: ^1.8.0
   http: ^1.2.1
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:

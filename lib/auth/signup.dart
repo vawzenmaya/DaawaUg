@@ -6,7 +6,7 @@ import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/register_email.dart';
 import 'package:toktok/auth/register_phone.dart';
 import 'package:toktok/auth/signin.dart';
-import 'package:toktok/navigation_container.dart';
+//import 'package:toktok/navigation_container.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -204,11 +204,11 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed up with Google',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Google services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );
@@ -221,11 +221,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed up with Facebook',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Facebook services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );
@@ -238,11 +238,11 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed up with Twitter',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Twitter / X services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );

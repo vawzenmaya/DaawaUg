@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/forgot_password_email.dart';
 import 'package:toktok/auth/forgot_password_phone.dart';
@@ -42,6 +43,9 @@ class _SignInPageState extends State<SignInPage> {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status'] == 'success') {
+        String username = responseData['username'];
+        await saveUserName(username);
+        setLoggedIn();
         Get.offAll(() => const NavigationContainer());
         Get.snackbar(
           'Successfully',
@@ -69,6 +73,16 @@ class _SignInPageState extends State<SignInPage> {
         snackPosition: SnackPosition.TOP,
       );
     }
+  }
+
+  Future<void> saveUserName(String username) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userName', username);
+  }
+
+  Future<void> setLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
   }
 
   @override
@@ -276,11 +290,11 @@ class _SignInPageState extends State<SignInPage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed in with Google',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Google services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );
@@ -291,11 +305,11 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(width: 30),
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed in with Facebook',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Facebook services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );
@@ -306,11 +320,11 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(width: 30),
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Successfully',
-                        'Signed in with Twitter',
-                        backgroundColor: Colors.grey,
+                        'Sorry',
+                        'Twitter / X services are temporary unavailable',
+                        backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
                       );

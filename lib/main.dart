@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:toktok/auth/signin.dart';
 //import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toktok/navigation_container.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,11 +41,16 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 5), () async {
-      Get.offAll(
-        () => const SignInPage(),
-        transition: Transition.size,
-        duration: const Duration(milliseconds: 500),
-      );
+      bool isLoggedIn = await checkLoginStatus();
+      if (isLoggedIn) {
+        Get.offAll(() => const NavigationContainer());
+      } else {
+        Get.offAll(
+          () => const SignInPage(),
+          transition: Transition.size,
+          duration: const Duration(milliseconds: 500),
+        );
+      }
     });
     return Scaffold(
         backgroundColor: Colors.black,
@@ -89,5 +96,10 @@ class _SplashScreenState extends State<SplashScreen> {
             const SizedBox(height: 20),
           ],
         ));
+  }
+
+  Future<bool> checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
   }
 }
