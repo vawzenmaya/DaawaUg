@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:toktok/auth/register_email.dart';
 import 'package:toktok/auth/register_phone.dart';
 import 'package:toktok/auth/signin.dart';
@@ -13,13 +15,59 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _contactController = TextEditingController();
   bool _isValidContact = false;
   bool isExampleVisible = true;
+
   void toggleExampleVisibility() {
     setState(() {
       isExampleVisible = !isExampleVisible;
     });
+  }
+
+  Future<void> _register() async {
+    final response = await http.post(
+      Uri.parse("https://daawaug.000webhostapp.com/auth/checkusers.php"),
+      body: {
+        'inputType': _isValidContact ? 'email' : 'phoneNumber',
+        'value': _contactController.text,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['status'] == 'errorEmail') {
+        Get.snackbar(
+          'User already exists',
+          'This email is already registered',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
+      } else if (responseData['status'] == 'errorPhone') {
+        Get.snackbar(
+          'User already exists',
+          'This phone number is already registered',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      } else if (responseData['status'] == 'successEmail') {
+        Get.to(RegisterEmail(emailAddress: _contactController.text));
+      } else if (responseData['status'] == 'successPhone') {
+        Get.to(RegisterPhone(phoneNumber: _contactController.text));
+      }
+    } else {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
   @override
@@ -81,63 +129,69 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                 ],
               ),
-              TextField(
-                controller: _contactController,
-                decoration: const InputDecoration(
-                  labelText: 'Email / Phone Number',
-                  labelStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide:
-                        BorderSide(color: Colors.greenAccent, width: 2.5),
-                  ),
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _contactController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email / Phone Number',
+                        labelStyle: TextStyle(color: Colors.grey),
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.grey),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.greenAccent, width: 2.5),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Row(
+                      children: [
+                        Text(
+                          'Example : 0711888999\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\texample@domain.com',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    ElevatedButton(
+                        onPressed: _isValidContact
+                            ? () {
+                                if (_isValidContact) {
+                                  if (!isExampleVisible) {
+                                    if (_formKey.currentState!.validate()) {
+                                      _register();
+                                    }
+                                  } else {
+                                    setState(() {
+                                      isExampleVisible = false;
+                                    });
+                                  }
+                                }
+                              }
+                            : null,
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 50),
+                          backgroundColor: _isValidContact
+                              ? Colors.greenAccent
+                              : const Color.fromARGB(255, 221, 221, 221),
+                        ),
+                        child: Text(
+                          'Register',
+                          style: TextStyle(
+                            color: _isValidContact ? Colors.white : Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        )),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              const Row(
-                children: [
-                  Text(
-                    'Example : 0711888999\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\texample@domain.com',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 50,
-              ),
-              ElevatedButton(
-                  onPressed: _isValidContact
-                      ? () {
-                          if (_isValidContact) {
-                            if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                .hasMatch(_contactController.text.trim())) {
-                              Get.to(RegisterEmail(
-                                  emailAddress:
-                                      _contactController.text.trim()));
-                            } else if (RegExp(r'^[0-9]{10}$')
-                                .hasMatch(_contactController.text.trim())) {
-                              Get.to(RegisterPhone(
-                                  phoneNumber: _contactController.text.trim()));
-                            }
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: _isValidContact
-                        ? Colors.greenAccent
-                        : const Color.fromARGB(255, 221, 221, 221),
-                  ),
-                  child: Text(
-                    'Register',
-                    style: TextStyle(
-                      color: _isValidContact ? Colors.white : Colors.grey,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  )),
               const SizedBox(
                 height: 50,
               ),

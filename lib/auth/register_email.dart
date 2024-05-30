@@ -53,21 +53,25 @@ class RegisterEmail extends StatelessWidget {
                           color: Colors.greenAccent,
                         ),
                         const SizedBox(width: 5),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Email to',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              emailAddress,
-                              style: const TextStyle(color: Colors.grey),
-                            ),
-                          ],
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Email to',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                emailAddress,
+                                style: const TextStyle(color: Colors.grey),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
