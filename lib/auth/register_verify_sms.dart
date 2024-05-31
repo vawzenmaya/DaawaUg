@@ -77,6 +77,9 @@ class _RegisterVerifySmsState extends State<RegisterVerifySms> {
                   backgroundColor: _isCodeVerified
                       ? Colors.greenAccent
                       : const Color.fromARGB(255, 221, 221, 221),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   elevation: 0,
                 ),
                 child: Text(

@@ -262,8 +262,12 @@ class RegisterFinishEmail extends StatelessWidget {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 50),
-                          backgroundColor: Colors.greenAccent),
+                        minimumSize: const Size(double.infinity, 50),
+                        backgroundColor: Colors.greenAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
                       child: const Text(
                         'Register',
                         style: TextStyle(color: Colors.white, fontSize: 18),
@@ -272,7 +276,7 @@ class RegisterFinishEmail extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 80),
+              const SizedBox(height: 60),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

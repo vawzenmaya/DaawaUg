@@ -118,7 +118,7 @@ class ResetPasswordPhone extends StatelessWidget {
                     controller: _contactController,
                     enabled: false,
                     decoration: const InputDecoration(
-                      labelText: 'Phone',
+                      labelText: 'Phone Number',
                       labelStyle: TextStyle(color: Colors.grey),
                       border: UnderlineInputBorder(
                         borderSide: BorderSide(color: Colors.grey),
@@ -215,8 +215,12 @@ class ResetPasswordPhone extends StatelessWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                        minimumSize: const Size(double.infinity, 50),
-                        backgroundColor: Colors.greenAccent),
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: Colors.greenAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
                     child: const Text(
                       'Save Changes',
                       style: TextStyle(color: Colors.white, fontSize: 18),

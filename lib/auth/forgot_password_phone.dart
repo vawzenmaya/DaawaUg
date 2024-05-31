@@ -31,7 +31,7 @@ class ForgotPasswordPagePhone extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Please choose one of the methods below to get a verification code for password reset',
+                'Please choose one of the methods below to get a password reset verification code',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),

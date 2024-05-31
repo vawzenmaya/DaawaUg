@@ -80,6 +80,9 @@ class _RegisterVerifyWhatsappState extends State<RegisterVerifyWhatsapp> {
                   backgroundColor: _isCodeVerified
                       ? Colors.greenAccent
                       : const Color.fromARGB(255, 221, 221, 221),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   elevation: 0,
                 ),
                 child: Text(

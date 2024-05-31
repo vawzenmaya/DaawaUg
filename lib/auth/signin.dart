@@ -307,6 +307,9 @@ class _SignInPageState extends State<SignInPage> {
                         backgroundColor: _isValidContact
                             ? Colors.greenAccent
                             : const Color.fromARGB(255, 221, 221, 221),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: Text(
                         isExampleVisible ? 'Next' : 'Login',
