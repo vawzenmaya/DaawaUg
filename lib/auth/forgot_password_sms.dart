@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_text_field/pin_code_text_field.dart';
-import 'package:toktok/auth/password_reset.dart';
+import 'package:toktok/auth/password_reset_phone.dart';
 
 class ForgotPasswordPageSms extends StatefulWidget {
   final String phoneNumber;
@@ -68,7 +68,9 @@ class _ForgotPasswordPageSmsState extends State<ForgotPasswordPageSms> {
               ElevatedButton(
                 onPressed: _isCodeVerified
                     ? () {
-                        Get.offAll(() => const ResetPassword());
+                        Get.offAll(() => ResetPasswordPhone(
+                              phoneNumber: widget.phoneNumber,
+                            ));
                       }
                     : null,
                 style: ElevatedButton.styleFrom(

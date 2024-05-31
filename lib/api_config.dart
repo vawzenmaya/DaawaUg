@@ -1,6 +1,6 @@
 // EMULATOR:  http://10.0.2.2
 
-// ONLINE:  https://usaadz.000webhostapp.com
+// ONLINE:  https://daawaug.000webhostapp.com
 
 // OFFLINE:  http://192.168.232.21
 
@@ -15,4 +15,6 @@ class ApiConfig {
   static const String signupWithPhoneUrl =
       '$baseUrl/auth/signup_with_phone.php';
   static const String checkUserUrl = '$baseUrl/auth/checkuser.php';
+  static const String resetPasswordWithPhoneUrl =
+      '$baseUrl/auth/reset_password_with_phone.php';
 }

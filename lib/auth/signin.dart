@@ -57,8 +57,8 @@ class _SignInPageState extends State<SignInPage> {
         );
       } else if (responseData['status'] == 'error') {
         Get.snackbar(
+          'Incorrect Password!',
           'Please try again',
-          'Invalid credentials',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -83,6 +83,42 @@ class _SignInPageState extends State<SignInPage> {
   Future<void> setLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isLoggedIn', true);
+  }
+
+  Future<void> _checkUser() async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.checkUserUrl),
+      body: {
+        'email': _contactController.text,
+        'phoneNumber': _contactController.text,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['status'] == 'success') {
+        Get.snackbar(
+          'User not found!',
+          'This credential is not associated with any DaawaTok account',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
+      } else if (responseData['status'] == 'error') {
+        setState(() {
+          isExampleVisible = false;
+        });
+      }
+    } else {
+      Get.snackbar(
+        'Error',
+        'An unexpected error occurred',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
   @override
@@ -221,20 +257,27 @@ class _SignInPageState extends State<SignInPage> {
                                 InkWell(
                                   onTap: () {
                                     if (_isValidContact) {
-                                      if (RegExp(
-                                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                                          .hasMatch(
-                                              _contactController.text.trim())) {
-                                        Get.to(ForgotPasswordPageEmail(
-                                            emailAddress: _contactController
-                                                .text
-                                                .trim()));
-                                      } else if (RegExp(r'^[0-9]{10}$')
-                                          .hasMatch(
-                                              _contactController.text.trim())) {
-                                        Get.to(ForgotPasswordPagePhone(
-                                            phoneNumber: _contactController.text
-                                                .trim()));
+                                      if (!isExampleVisible) {
+                                        if (RegExp(
+                                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                            .hasMatch(_contactController.text
+                                                .trim())) {
+                                          Get.to(ForgotPasswordPageEmail(
+                                              emailAddress: _contactController
+                                                  .text
+                                                  .trim()));
+                                        } else if (RegExp(r'^[0-9]{10}$')
+                                            .hasMatch(_contactController.text
+                                                .trim())) {
+                                          Get.to(ForgotPasswordPagePhone(
+                                              phoneNumber: _contactController
+                                                  .text
+                                                  .trim()));
+                                        }
+                                      } else {
+                                        setState(() {
+                                          isExampleVisible = false;
+                                        });
                                       }
                                     }
                                   },
@@ -250,14 +293,12 @@ class _SignInPageState extends State<SignInPage> {
                     ElevatedButton(
                       onPressed: _isValidContact
                           ? () {
-                              if (!isExampleVisible) {
+                              if (isExampleVisible) {
+                                _checkUser();
+                              } else {
                                 if (_formKey.currentState!.validate()) {
                                   _login();
                                 }
-                              } else {
-                                setState(() {
-                                  isExampleVisible = false;
-                                });
                               }
                             }
                           : () {},
@@ -292,8 +333,8 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Google services are temporary unavailable',
+                        'Google services temporary unavailable',
+                        'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -307,8 +348,8 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Facebook services are temporary unavailable',
+                        'Facebbok services temporary unavailable',
+                        'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -322,8 +363,8 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Twitter / X services are temporary unavailable',
+                        'Twitter services temporary unavailable',
+                        'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,

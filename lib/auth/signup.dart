@@ -41,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
       if (responseData['status'] == 'error') {
         Get.snackbar(
           'User already exists',
-          'This credential is already registered',
+          'This credential is already associated with onther DaawaTok account',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -206,8 +206,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Google services are temporary unavailable',
+                        'Google services temporary unavailable',
+                        'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -223,8 +223,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Facebook services are temporary unavailable',
+                        'Facebook services temporary unavailable',
+                        'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -240,8 +240,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Sorry',
-                        'Twitter / X services are temporary unavailable',
+                        'Twitter services temporary unavailable',
+                        'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
