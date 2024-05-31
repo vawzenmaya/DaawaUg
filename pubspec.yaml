@@ -86,6 +86,15 @@ flutter:
     - assets/disc.png
     - assets/home_filled.svg
     - assets/donate.svg
+    - assets/videos/software.mp4
+    - assets/videos/allah.mp4
+    - assets/videos/ssemakula.mp4
+    - assets/videos/america.mp4
+    - assets/videos/justus.mp4
+    - assets/videos/v1.mp4
+    - assets/videos/v2.mp4
+    - assets/videos/v3.mp4
+    - assets/videos/v4.mp4
     # - assets/donate_filled.svg
     - assets/message.svg
     # - assets/message_filled.svg

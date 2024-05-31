@@ -7,7 +7,7 @@ import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/forgot_password_email.dart';
 import 'package:toktok/auth/forgot_password_phone.dart';
 import 'package:toktok/auth/signup.dart';
-import 'package:toktok/navigation_container.dart';
+import 'package:toktok/bottom_menu.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -46,7 +46,7 @@ class _SignInPageState extends State<SignInPage> {
         String username = responseData['username'];
         await saveUserName(username);
         setLoggedIn();
-        Get.offAll(() => const NavigationContainer());
+        Get.offAll(() => const BottomMainMenu());
         Get.snackbar(
           'Successfully',
           'Signed In',

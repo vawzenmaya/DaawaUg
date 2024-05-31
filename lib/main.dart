@@ -4,7 +4,7 @@ import 'package:toktok/auth/signin.dart';
 //import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toktok/navigation_container.dart';
+import 'package:toktok/bottom_menu.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 5), () async {
       bool isLoggedIn = await checkLoginStatus();
       if (isLoggedIn) {
-        Get.offAll(() => const NavigationContainer());
+        Get.offAll(() => const BottomMainMenu());
       } else {
         Get.offAll(
           () => const SignInPage(),

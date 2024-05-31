@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
 import 'package:toktok/auth/username_text_formatters.dart';
-import 'package:toktok/navigation_container.dart';
+import 'package:toktok/bottom_menu.dart';
 
 // ignore: must_be_immutable
 class RegisterFinishPhone extends StatelessWidget {
@@ -43,7 +43,7 @@ class RegisterFinishPhone extends StatelessWidget {
         case 'registration_successful':
           setLoggedIn();
           saveUserName(_usernameController.text);
-          Get.offAll(() => const NavigationContainer());
+          Get.offAll(() => const BottomMainMenu());
           Get.snackbar(
             'Successfully',
             'Signed up with Phone Number',
@@ -164,6 +164,9 @@ class RegisterFinishPhone extends StatelessWidget {
                         }
                         if (value.length < 4) {
                           return 'Username must be at least 4 characters long';
+                        }
+                        if (value.length > 25) {
+                          return 'That username is too long';
                         }
                         return null;
                       },
