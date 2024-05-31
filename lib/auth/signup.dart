@@ -41,7 +41,7 @@ class _SignUpPageState extends State<SignUpPage> {
       if (responseData['status'] == 'error') {
         Get.snackbar(
           'User already exists',
-          'This credential is already associated with onther DaawaTok account',
+          'This credential is already associated with another DaawaTok account',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
