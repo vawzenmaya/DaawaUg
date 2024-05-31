@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
+import 'package:toktok/auth/username_text_formatters.dart';
 import 'package:toktok/navigation_container.dart';
 
 // ignore: must_be_immutable
@@ -162,8 +163,16 @@ class RegisterFinishEmail extends StatelessWidget {
                         if (value == null || value.isEmpty) {
                           return 'Please choose your username';
                         }
+                        if (value.length < 4) {
+                          return 'Username must be at least 4 characters long';
+                        }
                         return null;
                       },
+                      inputFormatters: [
+                        LowerCaseTextFormatter(),
+                        NoWhitespaceTextFormatter(),
+                        AllowLettersNumbersUnderscoresDotsTextFormatter(),
+                      ],
                       decoration: const InputDecoration(
                         labelText: 'Choose a username',
                         labelStyle: TextStyle(color: Colors.grey),

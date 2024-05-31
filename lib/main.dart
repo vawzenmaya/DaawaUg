@@ -76,22 +76,14 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const Spacer(),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Supported by: ',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.grey),
-                  ),
-                  Text(
-                    'Mansoor Group of Technologies',
-                    style: TextStyle(color: Colors.grey),
-                  ),
-                ],
-              ),
+            const Text(
+              'FROM',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Mansoor Group of Technologies',
+              style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
           ],

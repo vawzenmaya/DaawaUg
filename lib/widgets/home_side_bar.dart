@@ -173,7 +173,7 @@ class _HomeSideBarState extends State<HomeSideBar>
             bottom: -10,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.red,
+                color: Colors.green,
                 borderRadius: BorderRadius.circular(25),
               ),
               child: const Icon(
