@@ -185,7 +185,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                     const EdgeInsets.fromLTRB(15, 35, 0, 0),
                                 child: Container(
                                   decoration: const BoxDecoration(
-                                    color: Colors.redAccent,
+                                    color: Colors.red,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -242,7 +242,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           "86K",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 100),
+                        const SizedBox(height: 20),
                       ],
                     ),
                   ],
@@ -263,7 +263,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         ),
                         SizedBox(height: 5),
                         SizedBox(
-                          width: 200,
+                          width: 250,
                           child: ExpandableText(
                             "This is the DaawaTok Uganda Application developed by Mansoor Group of Technologies by three Computer Scientists: Mansoor, Lauren Vawzen and Justus Kays.",
                             style: TextStyle(
@@ -278,7 +278,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           ),
                         ),
                         SizedBox(
-                          height: 10,
+                          height: 20,
                         )
                       ],
                     ),
