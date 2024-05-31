@@ -206,7 +206,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Google services temporary unavailable',
+                        'Google services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -223,7 +223,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Facebook services temporary unavailable',
+                        'Facebook services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -240,7 +240,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Twitter services temporary unavailable',
+                        'Twitter / X services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,

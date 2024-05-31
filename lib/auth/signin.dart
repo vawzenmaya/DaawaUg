@@ -333,7 +333,7 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Google services temporary unavailable',
+                        'Google services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -348,7 +348,7 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Facebbok services temporary unavailable',
+                        'Facebook services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
@@ -363,7 +363,7 @@ class _SignInPageState extends State<SignInPage> {
                     onTap: () {
                       // Get.offAll(() => const NavigationContainer());
                       Get.snackbar(
-                        'Twitter services temporary unavailable',
+                        'Twitter / X services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
