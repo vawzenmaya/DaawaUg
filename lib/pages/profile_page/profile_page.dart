@@ -319,13 +319,34 @@ class _ProfilePageState extends State<ProfilePage> {
             const TabBar(
               tabs: [
                 Tab(
-                  text: 'Videos',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.post_add),
+                      SizedBox(width: 5),
+                      Text('Videos'),
+                    ],
+                  ),
                 ),
                 Tab(
-                  text: 'Favorites',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.bookmark),
+                      SizedBox(width: 5),
+                      Text('Favorites'),
+                    ],
+                  ),
                 ),
                 Tab(
-                  text: 'Liked',
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.favorite),
+                      SizedBox(width: 5),
+                      Text('Liked'),
+                    ],
+                  ),
                 ),
               ],
               labelColor: Colors.black,
