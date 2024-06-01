@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
+import 'package:toktok/pages/profile_page/drawer.dart';
 import 'package:toktok/pages/profile_page/tab_videos.dart';
 import 'package:toktok/pages/profile_page/tab_favorites.dart';
 import 'package:toktok/pages/profile_page/tab_liked.dart';
@@ -36,13 +37,13 @@ class _ProfilePageState extends State<ProfilePage> {
       final responseData = json.decode(response.body);
 
       setState(() {
-        _username = responseData['username'] ?? 'No username';
-        _fullNames = responseData['fullNames'] ?? 'No profile name';
+        _username = responseData['username'] ?? '';
+        _fullNames = responseData['fullNames'] ?? '';
         _email = responseData['email'] ?? 'No email';
-        _phoneNumber = responseData['phoneNumber'] ?? 'No phone number';
-        _biography = responseData['biography'] ?? 'No biography';
-        _profilePic = responseData['profilePic'] ?? 'assets/p1.jpg';
-        _role = responseData['role'] ?? 'No role';
+        _phoneNumber = responseData['phoneNumber'] ?? '';
+        _biography = responseData['biography'] ?? '';
+        _profilePic = responseData['profilePic'] ?? '';
+        _role = responseData['role'] ?? '';
       });
     } else {
       //print('Failed to fetch user details');
@@ -62,19 +63,42 @@ class _ProfilePageState extends State<ProfilePage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text(
-            _fullNames,
-            style: const TextStyle(
-                color: Colors.black, fontWeight: FontWeight.bold),
+          title: Row(
+            children: [
+              if (_fullNames != "")
+                Flexible(
+                  child: Text(
+                    _fullNames,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                )
+              else
+                const Flexible(
+                  child: Text(
+                    "No profile name !",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                )
+            ],
           ),
           backgroundColor: Colors.white70,
           elevation: 0,
-          leading: GestureDetector(
-            onTap: () {},
-            child: const Icon(
-              Icons.person,
-              color: Colors.black,
-            ),
+          leading: Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(
+                  Icons.person,
+                  color: Colors.black,
+                ),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            },
           ),
           actions: [
             Padding(
@@ -120,6 +144,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                 await SharedPreferences.getInstance();
                             await prefs.setBool('isLoggedIn', false);
                             Get.offAll(() => const SignInPage());
+                            Get.snackbar(
+                              'Successfully',
+                              'Logged out',
+                              backgroundColor: Colors.grey,
+                              colorText: Colors.white,
+                              snackPosition: SnackPosition.TOP,
+                              duration: const Duration(seconds: 5),
+                            );
                           },
                         ),
                       ],
@@ -143,6 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           ],
         ),
+        drawer: const ProfilePageDrawer(),
         body: Column(
           children: [
             Container(
@@ -161,6 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 5),
             Text(
               '@$_username',
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                   color: Colors.black,
                   fontSize: 20,
@@ -302,19 +336,31 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 5),
-            Text(
-              _biography,
-              style: TextStyle(color: Colors.grey[700]),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 250,
+              child: Column(
+                children: [
+                  if (_biography != "")
+                    Text(
+                      _biography,
+                      style: TextStyle(color: Colors.grey[700]),
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    )
+                  else
+                    Text(
+                      "No biography !",
+                      style: TextStyle(color: Colors.grey[700]),
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
             ),
-            Text(
-              _email,
-              style: TextStyle(color: Colors.grey[700]),
-            ),
-            Text(
-              "$_phoneNumber - $_role",
-              style: TextStyle(color: Colors.grey[700]),
-            ),
+            const SizedBox(height: 10),
             // Tab controller
             const TabBar(
               tabs: [
