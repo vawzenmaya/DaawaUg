@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
-import 'package:toktok/pages/first_tab.dart';
-import 'package:toktok/pages/profile_page/drawer.dart';
-import 'package:toktok/pages/second_tab.dart';
-import 'package:toktok/pages/third_tab.dart';
+import 'package:toktok/auth/signin.dart';
+import 'package:toktok/pages/profile_page/tab_videos.dart';
+import 'package:toktok/pages/profile_page/tab_favorites.dart';
+import 'package:toktok/pages/profile_page/tab_liked.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -16,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String _username = '';
-  String _fullName = '';
+  String _fullNames = '';
   String _email = '';
   String _phoneNumber = '';
   String _biography = '';
@@ -36,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
       setState(() {
         _username = responseData['username'] ?? 'No username';
-        _fullName = responseData['fullName'] ?? 'No profile name';
+        _fullNames = responseData['fullNames'] ?? 'No profile name';
         _email = responseData['email'] ?? 'No email';
         _phoneNumber = responseData['phoneNumber'] ?? 'No phone number';
         _biography = responseData['biography'] ?? 'No biography';
@@ -62,28 +63,91 @@ class _ProfilePageState extends State<ProfilePage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Text(
-            _fullName,
+            _fullNames,
             style: const TextStyle(
                 color: Colors.black, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white70,
           elevation: 0,
-          actions: const [
+          leading: GestureDetector(
+            onTap: () {},
+            child: const Icon(
+              Icons.person,
+              color: Colors.black,
+            ),
+          ),
+          actions: [
             Padding(
-              padding: EdgeInsets.only(right: 10.0),
-              child: Icon(
-                Icons.person_add,
-                color: Colors.black,
+              padding: const EdgeInsets.only(right: 10.0),
+              child: GestureDetector(
+                onTap: () {
+                  Get.bottomSheet(
+                    Wrap(
+                      children: [
+                        ListTile(
+                          leading: const Icon(
+                            Icons.settings,
+                            color: Colors.black,
+                          ),
+                          title: const Text(
+                            "Settings",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.lock,
+                            color: Colors.black,
+                          ),
+                          title: const Text(
+                            "Privacy",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onTap: () {},
+                        ),
+                        ListTile(
+                          leading: const Icon(
+                            Icons.logout,
+                            color: Colors.black,
+                          ),
+                          title: const Text(
+                            "Logout",
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          onTap: () async {
+                            SharedPreferences prefs =
+                                await SharedPreferences.getInstance();
+                            await prefs.setBool('isLoggedIn', false);
+                            Get.offAll(() => const SignInPage());
+                          },
+                        ),
+                      ],
+                    ),
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      side: const BorderSide(
+                        color: Colors.white,
+                        style: BorderStyle.solid,
+                        width: 2.0,
+                      ),
+                    ),
+                  );
+                },
+                child: const Icon(
+                  Icons.menu,
+                  color: Colors.black,
+                ),
               ),
             )
           ],
         ),
-        drawer: const ProfilePageDrawer(),
         body: Column(
           children: [
             Container(
-              height: 120,
-              width: 120,
+              height: 100,
+              width: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(60),
                 image: DecorationImage(
@@ -94,16 +158,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Text(
-                '@$_username',
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
-              ),
+            const SizedBox(height: 5),
+            Text(
+              '@$_username',
+              style: const TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.normal),
             ),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -117,17 +180,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         Text(
                           "Following",
                           style: TextStyle(
                             color: Colors.grey,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             fontSize: 15,
                           ),
                         )
@@ -145,17 +205,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         Text(
                           'Followers',
                           style: TextStyle(
                             color: Colors.grey,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             fontSize: 15,
                           ),
                         )
@@ -173,17 +230,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                            fontSize: 20,
                           ),
-                        ),
-                        SizedBox(
-                          height: 5,
                         ),
                         Text(
                           "Likes",
                           style: TextStyle(
                             color: Colors.grey,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.normal,
                             fontSize: 15,
                           ),
                         )
@@ -193,29 +247,62 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
               ],
             ),
-
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(15.0),
+                GestureDetector(
+                  onTap: () {},
                   child: Container(
-                    // ignore: sort_child_properties_last
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5)),
                     child: const Padding(
                       padding: EdgeInsets.all(10.0),
-                      child: Text("Edit Profile",
+                      child: Text("Edit profile",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                     ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey,
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(5)),
+                    child: const Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text("Share profile",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
                     decoration: BoxDecoration(
                         color: Colors.greenAccent,
                         border: Border.all(color: Colors.greenAccent),
                         borderRadius: BorderRadius.circular(5)),
+                    child: const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Icon(
+                          Icons.person_add,
+                          color: Colors.white,
+                        )),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 5),
             Text(
               _biography,
               style: TextStyle(color: Colors.grey[700]),
@@ -225,11 +312,7 @@ class _ProfilePageState extends State<ProfilePage> {
               style: TextStyle(color: Colors.grey[700]),
             ),
             Text(
-              _phoneNumber,
-              style: TextStyle(color: Colors.grey[700]),
-            ),
-            Text(
-              _role,
+              "$_phoneNumber - $_role",
               style: TextStyle(color: Colors.grey[700]),
             ),
             // Tab controller
@@ -251,9 +334,9 @@ class _ProfilePageState extends State<ProfilePage> {
             const Expanded(
               child: TabBarView(
                 children: [
-                  FirstTab(),
-                  SecondTab(),
-                  ThirdTab(),
+                  VideosTab(),
+                  FavoritesTab(),
+                  LikedTab(),
                 ],
               ),
             ),

@@ -175,7 +175,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                 ),
                                 child: ClipOval(
                                   child: Image.asset(
-                                    "assets/images/avatarx.PNG",
+                                    "assets/p1.jpg",
                                     fit: BoxFit.cover,
                                   ),
                                 ),

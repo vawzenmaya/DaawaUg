@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:toktok/pages/first_tab.dart';
-import 'package:toktok/pages/second_tab.dart';
-import 'package:toktok/pages/third_tab.dart';
-
+import 'package:toktok/pages/profile_page/tab_videos.dart';
+import 'package:toktok/pages/profile_page/tab_favorites.dart';
+import 'package:toktok/pages/profile_page/tab_liked.dart';
 
 class FollowPage extends StatefulWidget {
   const FollowPage({super.key});
@@ -64,7 +63,10 @@ class _FollowPageState extends State<FollowPage> {
               padding: EdgeInsets.all(20.0),
               child: Text(
                 '@vawzen',
-                style: TextStyle(color: Colors.black, fontSize: 25, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 25,
+                    fontWeight: FontWeight.bold),
               ),
             ),
             Row(
@@ -77,12 +79,18 @@ class _FollowPageState extends State<FollowPage> {
                       children: [
                         Text(
                           '3',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24),
                         ),
                         SizedBox(height: 5),
                         Text(
                           'Following',
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
                         )
                       ],
                     ),
@@ -95,12 +103,18 @@ class _FollowPageState extends State<FollowPage> {
                       children: [
                         Text(
                           '$_followersCount',
-                          style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24),
                         ),
                         const SizedBox(height: 5),
                         const Text(
                           'Followers',
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
                         )
                       ],
                     ),
@@ -113,12 +127,18 @@ class _FollowPageState extends State<FollowPage> {
                       children: [
                         Text(
                           '370',
-                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 24),
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 24),
                         ),
                         SizedBox(height: 5),
                         Text(
                           'Likes',
-                          style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold, fontSize: 15),
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15),
                         )
                       ],
                     ),
@@ -139,8 +159,13 @@ class _FollowPageState extends State<FollowPage> {
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Text(
-                            _isFollowing ? '    Unfollow' : '      Follow', // Show "Follow" or "Unfollow" based on state
-                            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+                            _isFollowing
+                                ? '    Unfollow'
+                                : '      Follow', // Show "Follow" or "Unfollow" based on state
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20),
                           ),
                         ),
                         decoration: BoxDecoration(
@@ -159,11 +184,16 @@ class _FollowPageState extends State<FollowPage> {
                       // ignore: sort_child_properties_last
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),
-                        child: Text('     Message', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
+                        child: Text('     Message',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20)),
                       ),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 219, 214, 214),
-                        border: Border.all(color: const Color.fromARGB(255, 201, 198, 198)),
+                        border: Border.all(
+                            color: const Color.fromARGB(255, 201, 198, 198)),
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
@@ -190,14 +220,14 @@ class _FollowPageState extends State<FollowPage> {
             const Expanded(
               child: TabBarView(
                 children: [
-                  FirstTab(),
-                  SecondTab(),
-                  ThirdTab(),
+                  VideosTab(),
+                  FavoritesTab(),
+                  LikedTab(),
                 ],
+              ),
             ),
-          ),
-      
-        ],),
+          ],
+        ),
       ),
     );
   }

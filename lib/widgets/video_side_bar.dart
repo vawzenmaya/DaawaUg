@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:toktok/models/video.dart';
-import 'package:toktok/pages/follow_page.dart';
+import 'package:toktok/pages/profile_page/follow_page.dart';
 import 'video_service.dart'; // Import the VideoService
 
 class HomeSideBar extends StatefulWidget {
