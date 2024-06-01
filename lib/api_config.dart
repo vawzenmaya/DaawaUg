@@ -17,4 +17,6 @@ class ApiConfig {
   static const String checkUserUrl = '$baseUrl/auth/checkuser.php';
   static const String resetPasswordWithPhoneUrl =
       '$baseUrl/auth/reset_password_with_phone.php';
+  static String getUserDataUrl(String username) =>
+      '$baseUrl/auth/fetchUserData.php?username=$username';
 }

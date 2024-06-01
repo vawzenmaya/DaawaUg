@@ -1,37 +1,73 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:toktok/auth/signin.dart';
+import 'package:toktok/api_config.dart';
 import 'package:toktok/pages/first_tab.dart';
+import 'package:toktok/pages/profile_page/drawer.dart';
 import 'package:toktok/pages/second_tab.dart';
 import 'package:toktok/pages/third_tab.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String _username = '';
+  String _fullName = '';
+  String _email = '';
+  String _phoneNumber = '';
+  String _biography = '';
+  String _profilePic = '';
+  String _role = '';
+
+  Future<void> fetchUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString('userName') ?? '';
+
+    final response = await http.get(
+      Uri.parse(ApiConfig.getUserDataUrl(username)),
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+
+      setState(() {
+        _username = responseData['username'] ?? 'No username';
+        _fullName = responseData['fullName'] ?? 'No profile name';
+        _email = responseData['email'] ?? 'No email';
+        _phoneNumber = responseData['phoneNumber'] ?? 'No phone number';
+        _biography = responseData['biography'] ?? 'No biography';
+        _profilePic = responseData['profilePic'] ?? 'assets/p1.jpg';
+        _role = responseData['role'] ?? 'No role';
+      });
+    } else {
+      //print('Failed to fetch user details');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text(
-            'Kasule Laurenmaya',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          title: Text(
+            _fullName,
+            style: const TextStyle(
+                color: Colors.black, fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: InkWell(
-            onTap: () async {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              await prefs.setBool('isLoggedIn', false);
-              Get.offAll(const SignInPage());
-            },
-            child: const Icon(
-              Icons.menu,
-              color: Colors.black,
-            ),
-          ),
           actions: const [
             Padding(
               padding: EdgeInsets.only(right: 10.0),
@@ -42,26 +78,27 @@ class ProfilePage extends StatelessWidget {
             )
           ],
         ),
-        backgroundColor: Colors.white,
+        drawer: const ProfilePageDrawer(),
         body: Column(
           children: [
-            // Profile pic
             Container(
               height: 120,
               width: 120,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(60),
-                image: const DecorationImage(
-                  image: AssetImage('assets/p1.jpg'),
+                image: DecorationImage(
+                  image: _profilePic.isNotEmpty
+                      ? NetworkImage(_profilePic)
+                      : const AssetImage('assets/p1.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(20.0),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
               child: Text(
-                '@vawzen',
-                style: TextStyle(
+                '@$_username',
+                style: const TextStyle(
                     color: Colors.black,
                     fontSize: 25,
                     fontWeight: FontWeight.bold),
@@ -87,7 +124,7 @@ class ProfilePage extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Following',
+                          "Following",
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
@@ -143,7 +180,7 @@ class ProfilePage extends StatelessWidget {
                           height: 5,
                         ),
                         Text(
-                          'Likes',
+                          "Likes",
                           style: TextStyle(
                             color: Colors.grey,
                             fontWeight: FontWeight.bold,
@@ -165,26 +202,37 @@ class ProfilePage extends StatelessWidget {
                   child: Container(
                     // ignore: sort_child_properties_last
                     child: const Padding(
-                      padding: EdgeInsets.all(15.0),
-                      child: Text('Edit Profile',
+                      padding: EdgeInsets.all(10.0),
+                      child: Text("Edit Profile",
                           style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold)),
                     ),
                     decoration: BoxDecoration(
-                        color: Colors.red,
-                        border: Border.all(color: Colors.red),
+                        color: Colors.greenAccent,
+                        border: Border.all(color: Colors.greenAccent),
                         borderRadius: BorderRadius.circular(5)),
                   ),
                 ),
               ],
             ),
             Text(
-              'Bio here',
+              _biography,
               style: TextStyle(color: Colors.grey[700]),
             ),
-
-            // tab controller
+            Text(
+              _email,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            Text(
+              _phoneNumber,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            Text(
+              _role,
+              style: TextStyle(color: Colors.grey[700]),
+            ),
+            // Tab controller
             const TabBar(
               tabs: [
                 Tab(

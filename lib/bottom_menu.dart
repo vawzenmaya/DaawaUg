@@ -3,7 +3,7 @@ import 'package:toktok/pages/add_video_page.dart';
 import 'package:toktok/pages/donate_page.dart';
 import 'package:toktok/pages/home_page.dart';
 import 'package:toktok/pages/inbox_page.dart';
-import 'package:toktok/pages/profile_page.dart';
+import 'package:toktok/pages/profile_page/profile_page.dart';
 
 class BottomMainMenu extends StatefulWidget {
   const BottomMainMenu({super.key});
