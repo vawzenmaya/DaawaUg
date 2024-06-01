@@ -167,8 +167,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           child: Stack(
                             children: [
                               Container(
-                                width: 50,
-                                height: 50,
+                                width: 40,
+                                height: 40,
                                 decoration: const BoxDecoration(
                                   color: Colors.transparent,
                                   shape: BoxShape.circle,
@@ -182,7 +182,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                               ),
                               Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(15, 35, 0, 0),
+                                    const EdgeInsets.fromLTRB(12.5, 30, 0, 0),
                                 child: Container(
                                   decoration: const BoxDecoration(
                                     color: Colors.red,
@@ -190,59 +190,64 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                   ),
                                   child: const Icon(
                                     Icons.add,
-                                    size: 20,
+                                    size: 16,
                                   ),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
                           child: const Icon(Icons.favorite, size: 30),
                         ),
                         const Text(
                           "517K",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 10),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
                           child: const Icon(Icons.message, size: 30),
                         ),
                         const Text(
                           "20K",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 10),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
                           child: const Icon(Icons.bookmark, size: 30),
                         ),
                         const Text(
                           "713",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 10),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
                           child: const Icon(Icons.share, size: 30),
                         ),
                         const Text(
                           "570",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 10),
                         ),
-                        const SizedBox(height: 15),
+                        const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
                           child: const Icon(Icons.download, size: 30),
                         ),
                         const Text(
                           "86K",
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 10),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 50),
                       ],
                     ),
                   ],
