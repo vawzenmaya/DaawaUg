@@ -65,10 +65,8 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                   onTap: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    await prefs.setBool(
-                        'isLoggedIn', false); // Set the login status to false
-                    Get.offAll(() =>
-                        const SignInPage()); // Navigate back to the choose side screen
+                    await prefs.setBool('isLoggedIn', false);
+                    Get.offAll(() => const SignInPage());
                   },
                 ),
               ],
