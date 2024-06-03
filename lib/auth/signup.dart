@@ -198,7 +198,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               const Text(
                 'Or sign up with',
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Color.fromRGBO(158, 158, 158, 1)),
               ),
               const SizedBox(
                 height: 15,
