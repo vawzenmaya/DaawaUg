@@ -43,8 +43,8 @@ class _SignInPageState extends State<SignInPage> {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status'] == 'success') {
-        String username = responseData['username'];
-        await saveUserName(username);
+        String userid = responseData['userid'];
+        await saveUserID(userid);
         setLoggedIn();
         Get.offAll(() => const BottomMainMenu());
         Get.snackbar(
@@ -75,9 +75,9 @@ class _SignInPageState extends State<SignInPage> {
     }
   }
 
-  Future<void> saveUserName(String username) async {
+  Future<void> saveUserID(String userid) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userName', username);
+    await prefs.setString('userID', userid);
   }
 
   Future<void> setLoggedIn() async {

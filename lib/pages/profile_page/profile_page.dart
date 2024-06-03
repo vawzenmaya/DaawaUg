@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
 import 'package:toktok/pages/profile_page/drawer.dart';
+import 'package:toktok/pages/profile_page/edit_profile.dart';
 import 'package:toktok/pages/profile_page/tab_videos.dart';
 import 'package:toktok/pages/profile_page/tab_favorites.dart';
 import 'package:toktok/pages/profile_page/tab_liked.dart';
@@ -19,18 +20,15 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   String _username = '';
   String _fullNames = '';
-  String _email = '';
-  String _phoneNumber = '';
   String _biography = '';
   String _profilePic = '';
-  String _role = '';
 
   Future<void> fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String username = prefs.getString('userName') ?? '';
+    String userid = prefs.getString('userID') ?? '';
 
     final response = await http.get(
-      Uri.parse(ApiConfig.getUserDataUrl(username)),
+      Uri.parse(ApiConfig.getUserDataUrl(userid)),
     );
 
     if (response.statusCode == 200) {
@@ -39,11 +37,8 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _username = responseData['username'] ?? '';
         _fullNames = responseData['fullNames'] ?? '';
-        _email = responseData['email'] ?? 'No email';
-        _phoneNumber = responseData['phoneNumber'] ?? '';
         _biography = responseData['biography'] ?? '';
         _profilePic = responseData['profilePic'] ?? '';
-        _role = responseData['role'] ?? '';
       });
     } else {
       //print('Failed to fetch user details');
@@ -77,7 +72,7 @@ class _ProfilePageState extends State<ProfilePage> {
               else
                 const Flexible(
                   child: Text(
-                    "No profile name !",
+                    "No profile name!",
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
@@ -183,11 +178,12 @@ class _ProfilePageState extends State<ProfilePage> {
               width: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(60),
+                color: Colors.grey,
                 image: DecorationImage(
                   image: _profilePic.isNotEmpty
                       ? NetworkImage(_profilePic)
-                      : const AssetImage('assets/p1.jpg'),
-                  fit: BoxFit.cover,
+                      : const AssetImage('assets/images/person.png'),
+                  fit: BoxFit.fitHeight,
                 ),
               ),
             ),
@@ -286,7 +282,9 @@ class _ProfilePageState extends State<ProfilePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Get.to(const EditProfilePage());
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                         color: Colors.grey,

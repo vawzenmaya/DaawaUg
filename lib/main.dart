@@ -80,9 +80,9 @@ class _SplashScreenState extends State<SplashScreen> {
               'FROM',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             const Text(
-              'Mansoor Group of Technologies',
+              '©DaawaTok Uganda',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),

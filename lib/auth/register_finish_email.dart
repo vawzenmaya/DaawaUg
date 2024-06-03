@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -29,20 +31,29 @@ class RegisterFinishEmail extends StatelessWidget {
 
     String responseBody = response.body;
     if (response.statusCode == 200) {
-      switch (responseBody) {
-        case 'username_already_taken':
-          Get.snackbar(
-            'Sorry username already taken',
-            'Please choose another username',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
-          break;
-        case 'registration_successful':
+      if (responseBody == 'username_already_taken') {
+        Get.snackbar(
+          'Sorry username already taken',
+          'Please choose another username',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
+      } else if (responseBody == 'registration_failed') {
+        Get.snackbar(
+          'Error',
+          'There was an error registering your account. Please try again.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
+      } else {
+        final Map<String, dynamic> responseJson = json.decode(responseBody);
+        if (responseJson['status'] == 'registration_successful') {
           setLoggedIn();
-          saveUserName(_usernameController.text);
+          saveUserID(responseJson['userid'].toString());
           Get.offAll(() => const BottomMainMenu());
           Get.snackbar(
             'Successfully',
@@ -52,18 +63,7 @@ class RegisterFinishEmail extends StatelessWidget {
             snackPosition: SnackPosition.TOP,
             duration: const Duration(seconds: 5),
           );
-          break;
-        case 'registration_failed':
-          Get.snackbar(
-            'Error',
-            'There was an error registering your account. Please try again.',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
-          break;
-        default:
+        } else {
           Get.snackbar(
             'Error',
             'An unknown error occurred during registration',
@@ -72,6 +72,7 @@ class RegisterFinishEmail extends StatelessWidget {
             snackPosition: SnackPosition.TOP,
             duration: const Duration(seconds: 5),
           );
+        }
       }
     } else {
       // Handle registration failure due to server error
@@ -86,9 +87,9 @@ class RegisterFinishEmail extends StatelessWidget {
     }
   }
 
-  Future<void> saveUserName(String username) async {
+  Future<void> saveUserID(String userid) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userName', username);
+    await prefs.setString('userID', userid);
   }
 
   Future<void> setLoggedIn() async {

@@ -81,6 +81,7 @@ flutter:
     - assets/images/facebook.png
     - assets/images/twitter.png
     - assets/images/whatsapp.png
+    - assets/images/person.png
     - assets/images/avatarx.PNG
     - assets/home.svg
     - assets/disc.png
