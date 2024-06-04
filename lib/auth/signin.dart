@@ -354,7 +354,7 @@ class _SignInPageState extends State<SignInPage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      // Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Google services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',
@@ -369,7 +369,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(width: 30),
                   InkWell(
                     onTap: () {
-                      // Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Facebook services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',
@@ -384,7 +384,7 @@ class _SignInPageState extends State<SignInPage> {
                   const SizedBox(width: 30),
                   InkWell(
                     onTap: () {
-                      // Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Twitter / X services are temporarily unavailable',
                         'Sorry for the sign in inconveniences caused.',

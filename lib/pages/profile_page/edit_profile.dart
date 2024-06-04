@@ -29,83 +29,104 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future<void> _fetchUserData() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userid = prefs.getString('userID');
-    if (userid != null) {
-      final response = await http.get(
-        Uri.parse(ApiConfig.getUserDataUrl(userid)),
-      );
-
-      if (response.statusCode == 200) {
-        final userData = json.decode(response.body);
-        setState(() {
-          _usernameController.text = userData['username'];
-          _fullNamesController.text = userData['fullNames'];
-          _biographyController.text = userData['biography'];
-          _phoneNumberController.text = userData['phoneNumber'];
-          _emailController.text = userData['email'];
-          _email = userData['email'] ?? 'No email';
-          _phoneNumber = userData['phoneNumber'] ?? '';
-        });
-      } else {
-        Get.snackbar(
-          'Error',
-          'Failed to fetch your data',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? userid = prefs.getString('userID');
+      if (userid != null) {
+        final response = await http.get(
+          Uri.parse(ApiConfig.getUserDataUrl(userid)),
         );
+
+        if (response.statusCode == 200) {
+          final userData = json.decode(response.body);
+          setState(() {
+            _usernameController.text = userData['username'];
+            _fullNamesController.text = userData['fullNames'];
+            _biographyController.text = userData['biography'];
+            _phoneNumberController.text = userData['phoneNumber'];
+            _emailController.text = userData['email'];
+            _email = userData['email'] ?? 'No email';
+            _phoneNumber = userData['phoneNumber'] ?? '';
+          });
+        } else {
+          Get.snackbar(
+            'Error',
+            'Failed to fetch your data',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+          );
+        }
       }
+    } catch (e) {
+      Get.snackbar(
+        'Network Error',
+        'Check your internet connection',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 
   Future<void> _saveChanges() async {
-    if (_formKey.currentState!.validate()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? userid = prefs.getString('userID');
-      if (userid != null) {
-        final response = await http.post(
-          Uri.parse(ApiConfig.updateUserProfileUrl),
-          body: {
-            'userid': userid,
-            'username': _usernameController.text,
-            'fullNames': _fullNamesController.text,
-            'biography': _biographyController.text,
-            'phoneNumber': _phoneNumberController.text,
-            'email': _emailController.text,
-          },
-        );
-
-        final responseData = json.decode(response.body);
-        if (response.statusCode == 200 && responseData['status'] == 'success') {
-          Get.back();
-          Get.snackbar(
-            'Success',
-            'Profile updated successfully',
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
+    try {
+      if (_formKey.currentState!.validate()) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? userid = prefs.getString('userID');
+        if (userid != null) {
+          final response = await http.post(
+            Uri.parse(ApiConfig.updateUserProfileUrl),
+            body: {
+              'userid': userid,
+              'username': _usernameController.text,
+              'fullNames': _fullNamesController.text,
+              'biography': _biographyController.text,
+              'phoneNumber': _phoneNumberController.text,
+              'email': _emailController.text,
+            },
           );
-        } else {
-          if (responseData['status'] == 'error') {
+
+          final responseData = json.decode(response.body);
+          if (response.statusCode == 200 &&
+              responseData['status'] == 'success') {
+            Get.back();
             Get.snackbar(
-              'Sorry',
-              responseData['message'] ?? 'Failed to update profile',
-              backgroundColor: Colors.red,
+              'Success',
+              'Profile updated successfully',
+              backgroundColor: Colors.green,
               colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
             );
           } else {
-            Get.snackbar(
-              'Error',
-              'Failed to update profile',
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-              snackPosition: SnackPosition.TOP,
-            );
+            if (responseData['status'] == 'error') {
+              Get.snackbar(
+                'Sorry',
+                responseData['message'] ?? 'Failed to update profile',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                snackPosition: SnackPosition.TOP,
+              );
+            } else {
+              Get.snackbar(
+                'Error',
+                'Failed to update profile',
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+                snackPosition: SnackPosition.TOP,
+              );
+            }
           }
         }
       }
+    } catch (e) {
+      Get.snackbar(
+        'Network Error',
+        'Check your internet connection',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 

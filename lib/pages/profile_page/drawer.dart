@@ -76,7 +76,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                 Column(
                   children: [
                     Container(
-                      color: Colors.white,
+                      color: Colors.grey,
                       height: 30,
                     ),
                     Container(
@@ -90,7 +90,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                               "DaawaTok",
                               style: TextStyle(
                                   color: Colors.greenAccent,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w400,
                                   fontSize: 50),
                             ),
                           ),
@@ -138,12 +138,12 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                                         color: Colors.white,
                                         shape: BoxShape.circle,
                                       ),
-                                      child: ClipOval(
-                                        child: Image.asset(
-                                          "assets/images/person.png",
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                      ),
+                                      child: const ClipOval(
+                                          child: Icon(
+                                        Icons.person,
+                                        color: Colors.grey,
+                                        size: 80,
+                                      )),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.fromLTRB(

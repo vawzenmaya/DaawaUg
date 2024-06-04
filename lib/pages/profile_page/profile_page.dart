@@ -183,20 +183,34 @@ class _ProfilePageState extends State<ProfilePage> {
         drawer: const ProfilePageDrawer(),
         body: Column(
           children: [
-            Container(
-              height: 100,
-              width: 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(60),
-                color: Colors.grey,
-                image: DecorationImage(
-                  image: _profilePic.isNotEmpty
-                      ? NetworkImage(_profilePic)
-                      : const AssetImage('assets/images/person.png'),
-                  fit: BoxFit.fitHeight,
+            if (_profilePic != "")
+              Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(60),
+                  color: Colors.grey,
+                  image: DecorationImage(
+                    image: NetworkImage(_profilePic),
+                    fit: BoxFit.fitHeight,
+                  ),
                 ),
+              )
+            else
+              Container(
+                width: 100,
+                height: 100,
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+                child: const ClipOval(
+                    child: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 100,
+                )),
               ),
-            ),
             const SizedBox(height: 5),
             Text(
               '@$_username',

@@ -6,7 +6,7 @@ import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/register_email.dart';
 import 'package:toktok/auth/register_phone.dart';
 import 'package:toktok/auth/signin.dart';
-import 'package:toktok/bottom_menu.dart';
+//import 'package:toktok/bottom_menu.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -217,7 +217,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 children: [
                   InkWell(
                     onTap: () {
-                      Get.offAll(() => const BottomMainMenu());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Google services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
@@ -234,7 +234,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      // Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Facebook services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
@@ -251,7 +251,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   ),
                   InkWell(
                     onTap: () {
-                      // Get.offAll(() => const NavigationContainer());
+                      // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Twitter / X services are temporarily unavailable',
                         'Sorry for the sign up inconveniences caused.',
