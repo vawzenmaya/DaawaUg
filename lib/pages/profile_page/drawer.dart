@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/pages/profile_page/edit_profile.dart';
+import 'package:toktok/pages/profile_page/edit_profile_pic.dart';
 
 class ProfilePageDrawer extends StatefulWidget {
   const ProfilePageDrawer({super.key});
@@ -150,7 +151,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                                           50, 60, 0, 0),
                                       child: GestureDetector(
                                         onTap: () {
-                                          Get.to(const EditProfilePage());
+                                          Get.to(const EditProfilePic());
                                         },
                                         child: Container(
                                           decoration: const BoxDecoration(

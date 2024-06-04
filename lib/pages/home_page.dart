@@ -240,10 +240,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                         const SizedBox(height: 12),
                         InkWell(
                           onTap: () {},
-                          child: const Icon(Icons.download, size: 30),
+                          child: const Icon(Icons.question_answer, size: 30),
                         ),
                         const Text(
-                          "86K",
+                          "573",
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 10),
                         ),

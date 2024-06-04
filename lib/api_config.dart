@@ -9,16 +9,16 @@ class ApiConfig {
       'https://daawaug.000webhostapp.com'; // Replace IP address
 
   // API endpoints
-  static const String signinUrl = '$baseUrl/auth/signin.php';
+  static const String signinUrl = '$baseUrl/daawatokug/auth/signin.php';
   static const String signupWithEmailUrl =
-      '$baseUrl/auth/signup_with_email.php';
+      '$baseUrl/daawatokug/auth/signup_with_email.php';
   static const String signupWithPhoneUrl =
-      '$baseUrl/auth/signup_with_phone.php';
-  static const String checkUserUrl = '$baseUrl/auth/checkuser.php';
+      '$baseUrl/daawatokug/auth/signup_with_phone.php';
+  static const String checkUserUrl = '$baseUrl/daawatokug/auth/checkuser.php';
   static const String resetPasswordWithPhoneUrl =
-      '$baseUrl/auth/reset_password_with_phone.php';
+      '$baseUrl/daawatokug/auth/reset_password_with_phone.php';
   static String getUserDataUrl(String userid) =>
-      '$baseUrl/auth/fetchUserData.php?userid=$userid';
+      '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
   static const String updateUserProfileUrl =
-      '$baseUrl/auth/updateUserProfile.php';
+      '$baseUrl/daawatokug/auth/updateUserProfile.php';
 }

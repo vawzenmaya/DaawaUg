@@ -1,10 +1,12 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/username_text_formatters.dart';
+import 'package:toktok/pages/profile_page/edit_profile_pic.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -159,6 +161,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    const EditProfilePic(),
+                    const SizedBox(height: 20),
                     TextFormField(
                       controller: _usernameController,
                       maxLength: 25,
