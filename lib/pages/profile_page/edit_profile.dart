@@ -50,7 +50,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
       } else {
         Get.snackbar(
           'Error',
-          'Failed to fetch user data',
+          'Failed to fetch your data',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -87,13 +87,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
             snackPosition: SnackPosition.TOP,
           );
         } else {
-          Get.snackbar(
-            'Error',
-            responseData['message'] ?? 'Failed to update profile',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-          );
+          if (responseData['status'] == 'error') {
+            Get.snackbar(
+              'Sorry',
+              responseData['message'] ?? 'Failed to update profile',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+            );
+          } else {
+            Get.snackbar(
+              'Error',
+              'Failed to update profile',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+            );
+          }
         }
       }
     }
