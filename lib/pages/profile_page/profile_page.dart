@@ -212,14 +212,24 @@ class _ProfilePageState extends State<ProfilePage> {
                 )),
               ),
             const SizedBox(height: 5),
-            Text(
-              '@$_username',
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: Colors.black,
-                  fontSize: 20,
-                  fontWeight: FontWeight.normal),
-            ),
+            if (_username != "")
+              Text(
+                '@$_username',
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal),
+              )
+            else
+              const Text(
+                '@username!',
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.normal),
+              ),
             const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
