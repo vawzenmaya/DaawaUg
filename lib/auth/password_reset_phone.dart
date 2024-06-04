@@ -14,56 +14,66 @@ class ResetPasswordPhone extends StatelessWidget {
   final RxBool isObscure = true.obs;
 
   Future<void> _resetPassword() async {
-    final response = await http.post(
-      Uri.parse(ApiConfig.resetPasswordWithPhoneUrl),
-      body: {
-        'phoneNumber': _contactController.text,
-        'password': _passwordController.text,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.resetPasswordWithPhoneUrl),
+        body: {
+          'phoneNumber': _contactController.text,
+          'password': _passwordController.text,
+        },
+      );
 
-    String responseBody = response.body;
-    if (response.statusCode == 200) {
-      switch (responseBody) {
-        case 'update_successful':
-          Get.offAll(() => const SignInPage());
-          Get.snackbar(
-            'Successfully',
-            'Changed your password',
-            backgroundColor: Colors.grey,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
-          break;
-        case 'update_failed':
-          Get.snackbar(
-            'Error',
-            'There was an error with changing your password. Please try again.',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
-          break;
-        default:
-          Get.snackbar(
-            'Error',
-            'An unknown error occurred during the update process',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
+      String responseBody = response.body;
+      if (response.statusCode == 200) {
+        switch (responseBody) {
+          case 'update_successful':
+            Get.offAll(() => const SignInPage());
+            Get.snackbar(
+              'Successfully',
+              'Changed your password',
+              backgroundColor: Colors.grey,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 5),
+            );
+            break;
+          case 'update_failed':
+            Get.snackbar(
+              'Error',
+              'There was an error with changing your password. Please try again.',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 5),
+            );
+            break;
+          default:
+            Get.snackbar(
+              'Error',
+              'An unknown error occurred during the update process',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 5),
+            );
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to change your password. Please try again later.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
       }
-    } else {
+    } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to change your password. Please try again later.',
+        'Network Error',
+        'Check your internet connection',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 5),
       );
     }
   }

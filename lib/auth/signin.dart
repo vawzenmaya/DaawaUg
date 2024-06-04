@@ -31,42 +31,53 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> _login() async {
-    final response = await http.post(
-      Uri.parse(ApiConfig.signinUrl),
-      body: {
-        'email': _contactController.text,
-        'phoneNumber': _contactController.text,
-        'password': _passwordController.text,
-      },
-    );
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      if (responseData['status'] == 'success') {
-        String userid = responseData['userid'];
-        await saveUserID(userid);
-        await setLoggedIn();
-        Get.offAll(() => const BottomMainMenu());
-        Get.snackbar(
-          'Successfully',
-          'Signed In',
-          backgroundColor: Colors.grey,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 5),
-        );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.signinUrl),
+        body: {
+          'email': _contactController.text,
+          'phoneNumber': _contactController.text,
+          'password': _passwordController.text,
+        },
+      );
+
+      String responseBody = response.body;
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseJson = json.decode(responseBody);
+        if (responseJson['status'] == 'success') {
+          setLoggedIn();
+          saveUserID(responseJson['userid'].toString());
+          Get.offAll(() => const BottomMainMenu());
+          Get.snackbar(
+            'Successfully',
+            'Signed In',
+            backgroundColor: Colors.grey,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(seconds: 5),
+          );
+        } else {
+          Get.snackbar(
+            'Incorrect Password!',
+            'Please try again',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+          );
+        }
       } else {
         Get.snackbar(
-          'Incorrect Password!',
-          'Please try again',
+          'Error',
+          'An unexpected error occurred',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
         );
       }
-    } else {
+    } catch (e) {
       Get.snackbar(
-        'Error',
-        'An unexpected error occurred',
+        'Network Error',
+        'Check your internet connection',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -85,34 +96,44 @@ class _SignInPageState extends State<SignInPage> {
   }
 
   Future<void> _checkUser() async {
-    final response = await http.post(
-      Uri.parse(ApiConfig.checkUserUrl),
-      body: {
-        'email': _contactController.text,
-        'phoneNumber': _contactController.text,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.checkUserUrl),
+        body: {
+          'email': _contactController.text,
+          'phoneNumber': _contactController.text,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      if (responseData['status'] == 'success') {
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['status'] == 'success') {
+          Get.snackbar(
+            'User not found!',
+            'This credential is not associated with any DaawaTok account',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(seconds: 5),
+          );
+        } else if (responseData['status'] == 'error') {
+          setState(() {
+            isExampleVisible = false;
+          });
+        }
+      } else {
         Get.snackbar(
-          'User not found!',
-          'This credential is not associated with any DaawaTok account',
+          'Error',
+          'An unexpected error occurred',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 5),
         );
-      } else if (responseData['status'] == 'error') {
-        setState(() {
-          isExampleVisible = false;
-        });
       }
-    } else {
+    } catch (e) {
       Get.snackbar(
-        'Error',
-        'An unexpected error occurred',
+        'Network Error',
+        'Check your internet connection',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

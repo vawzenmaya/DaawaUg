@@ -20,69 +20,78 @@ class RegisterFinishEmail extends StatelessWidget {
   final RxBool isObscure = true.obs;
 
   Future<void> _signUp() async {
-    final response = await http.post(
-      Uri.parse(ApiConfig.signupWithEmailUrl),
-      body: {
-        'email': _contactController.text,
-        'username': _usernameController.text,
-        'password': _passwordController.text,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.signupWithEmailUrl),
+        body: {
+          'email': _contactController.text,
+          'username': _usernameController.text,
+          'password': _passwordController.text,
+        },
+      );
 
-    String responseBody = response.body;
-    if (response.statusCode == 200) {
-      if (responseBody == 'username_already_taken') {
-        Get.snackbar(
-          'Sorry username already taken',
-          'Please choose another username',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 5),
-        );
-      } else if (responseBody == 'registration_failed') {
-        Get.snackbar(
-          'Error',
-          'There was an error registering your account. Please try again.',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 5),
-        );
-      } else {
-        final Map<String, dynamic> responseJson = json.decode(responseBody);
-        if (responseJson['status'] == 'registration_successful') {
-          setLoggedIn();
-          saveUserID(responseJson['userid'].toString());
-          Get.offAll(() => const BottomMainMenu());
+      String responseBody = response.body;
+      if (response.statusCode == 200) {
+        if (responseBody == 'username_already_taken') {
           Get.snackbar(
-            'Successfully',
-            'Signed up with Email',
-            backgroundColor: Colors.grey,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-            duration: const Duration(seconds: 5),
-          );
-        } else {
-          Get.snackbar(
-            'Error',
-            'An unknown error occurred during registration',
+            'Sorry username already taken',
+            'Please choose another username',
             backgroundColor: Colors.red,
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
             duration: const Duration(seconds: 5),
           );
+        } else if (responseBody == 'registration_failed') {
+          Get.snackbar(
+            'Error',
+            'There was an error registering your account. Please try again.',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(seconds: 5),
+          );
+        } else {
+          final Map<String, dynamic> responseJson = json.decode(responseBody);
+          if (responseJson['status'] == 'registration_successful') {
+            setLoggedIn();
+            saveUserID(responseJson['userid'].toString());
+            Get.offAll(() => const BottomMainMenu());
+            Get.snackbar(
+              'Successfully',
+              'Signed up with Email',
+              backgroundColor: Colors.grey,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 5),
+            );
+          } else {
+            Get.snackbar(
+              'Error',
+              'An unknown error occurred during registration',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+              snackPosition: SnackPosition.TOP,
+              duration: const Duration(seconds: 5),
+            );
+          }
         }
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to register. Please try again later.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 5),
+        );
       }
-    } else {
-      // Handle registration failure due to server error
+    } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to register. Please try again later.',
+        'Network Error',
+        'Check your internet connection',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 5),
       );
     }
   }

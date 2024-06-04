@@ -7,7 +7,6 @@ import 'package:toktok/auth/register_email.dart';
 import 'package:toktok/auth/register_phone.dart';
 import 'package:toktok/auth/signin.dart';
 import 'package:toktok/bottom_menu.dart';
-//import 'package:toktok/navigation_container.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -29,38 +28,48 @@ class _SignUpPageState extends State<SignUpPage> {
   }
 
   Future<void> _register() async {
-    final response = await http.post(
-      Uri.parse(ApiConfig.checkUserUrl),
-      body: {
-        'email': _contactController.text,
-        'phoneNumber': _contactController.text,
-      },
-    );
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.checkUserUrl),
+        body: {
+          'email': _contactController.text,
+          'phoneNumber': _contactController.text,
+        },
+      );
 
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      if (responseData['status'] == 'error') {
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        if (responseData['status'] == 'error') {
+          Get.snackbar(
+            'User already exists',
+            'This credential is already associated with another DaawaTok account',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(seconds: 5),
+          );
+        } else if (responseData['status'] == 'success') {
+          if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+              .hasMatch(_contactController.text.trim())) {
+            Get.to(RegisterEmail(emailAddress: _contactController.text.trim()));
+          } else if (RegExp(r'^[0-9]{10}$')
+              .hasMatch(_contactController.text.trim())) {
+            Get.to(RegisterPhone(phoneNumber: _contactController.text.trim()));
+          }
+        }
+      } else {
         Get.snackbar(
-          'User already exists',
-          'This credential is already associated with another DaawaTok account',
+          'Error',
+          'An unexpected error occurred',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 5),
         );
-      } else if (responseData['status'] == 'success') {
-        if (RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-            .hasMatch(_contactController.text.trim())) {
-          Get.to(RegisterEmail(emailAddress: _contactController.text.trim()));
-        } else if (RegExp(r'^[0-9]{10}$')
-            .hasMatch(_contactController.text.trim())) {
-          Get.to(RegisterPhone(phoneNumber: _contactController.text.trim()));
-        }
       }
-    } else {
+    } catch (e) {
       Get.snackbar(
-        'Error',
-        'An unexpected error occurred',
+        'Network Error',
+        'Check your internet connection',
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
