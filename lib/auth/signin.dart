@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/forgot_password_email.dart';
@@ -39,13 +39,12 @@ class _SignInPageState extends State<SignInPage> {
         'password': _passwordController.text,
       },
     );
-
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       if (responseData['status'] == 'success') {
         String userid = responseData['userid'];
         await saveUserID(userid);
-        setLoggedIn();
+        await setLoggedIn();
         Get.offAll(() => const BottomMainMenu());
         Get.snackbar(
           'Successfully',
@@ -55,7 +54,7 @@ class _SignInPageState extends State<SignInPage> {
           snackPosition: SnackPosition.TOP,
           duration: const Duration(seconds: 5),
         );
-      } else if (responseData['status'] == 'error') {
+      } else {
         Get.snackbar(
           'Incorrect Password!',
           'Please try again',
