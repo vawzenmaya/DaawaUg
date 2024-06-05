@@ -1,8 +1,38 @@
-// ignore_for_file: library_private_types_in_public_api
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:toktok/api_config.dart';
 import 'package:video_player/video_player.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:http/http.dart' as http;
+
+class Video {
+  final String videoId;
+  final String userId;
+  final String videoName;
+  final String description;
+  final String datePosted;
+  final String videoUrl;
+
+  Video({
+    required this.videoId,
+    required this.userId,
+    required this.videoName,
+    required this.description,
+    required this.datePosted,
+    required this.videoUrl,
+  });
+
+  factory Video.fromJson(Map<String, dynamic> json) {
+    return Video(
+      videoId: json['videoid'],
+      userId: json['userid'],
+      videoName: json['videoname'],
+      description: json['description'],
+      datePosted: json['dateposted'],
+      videoUrl: json['videourl'],
+    );
+  }
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,17 +43,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   bool _isForYouSelected = true;
-  final List<String> videoUrls = [
-    'assets/videos/v1.mp4',
-    'assets/videos/v2.mp4',
-    'assets/videos/v3.mp4',
-    'assets/videos/v4.mp4',
-    'assets/videos/software.mp4',
-    'assets/videos/allah.mp4',
-    'assets/videos/ssemakula.mp4',
-    'assets/videos/america.mp4',
-    'assets/videos/justus.mp4',
-  ];
+  late Future<List<Video>> futureVideos;
+
+  @override
+  void initState() {
+    super.initState();
+    futureVideos = fetchVideos();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +123,31 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      body: PageView.builder(
-        scrollDirection: Axis.vertical,
-        itemCount: videoUrls.length,
-        itemBuilder: (context, index) {
-          return VideoPlayerWidget(videoUrl: videoUrls[index]);
+      body: FutureBuilder<List<Video>>(
+        future: futureVideos,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                backgroundColor: Colors.grey.withOpacity(0.5),
+                strokeWidth: 4.0,
+              ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No videos found'));
+          } else {
+            final videos = snapshot.data!;
+            return PageView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: videos.length,
+              itemBuilder: (context, index) {
+                return VideoPlayerWidget(video: videos[index]);
+              },
+            );
+          }
         },
       ),
     );
@@ -109,9 +155,11 @@ class _HomePageState extends State<HomePage> {
 }
 
 class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-  const VideoPlayerWidget({super.key, required this.videoUrl});
+  final Video video;
+  const VideoPlayerWidget({super.key, required this.video});
+
   @override
+  // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
@@ -121,7 +169,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.asset(widget.videoUrl)
+    _controller = VideoPlayerController.network(widget.video.videoUrl)
       ..initialize().then((_) {
         setState(() {});
         _controller.play();
@@ -253,25 +301,25 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   ],
                 ),
               ),
-              const Row(
+              Row(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Spacer(),
+                        const Spacer(),
                         Text(
-                          "@daawatok",
-                          style: TextStyle(
+                          "@${widget.video.userId}",
+                          style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 18),
                         ),
-                        SizedBox(height: 5),
+                        const SizedBox(height: 5),
                         SizedBox(
                           width: 250,
                           child: ExpandableText(
-                            "This is the DaawaTok Uganda Application developed by Mansoor Group of Technologies by three Computer Scientists: Mansoor, Lauren Vawzen and Justus Kays.",
-                            style: TextStyle(
+                            "${widget.video.videoName}\n${widget.video.description}\nDate Posted: ${widget.video.datePosted}",
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300),
                             expandText: 'Expand',
@@ -282,7 +330,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             linkColor: Colors.grey,
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         )
                       ],
@@ -311,5 +359,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
               ),
             ),
           );
+  }
+}
+
+Future<List<Video>> fetchVideos() async {
+  final response = await http.get(Uri.parse(ApiConfig.fetchVideosUrl));
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = jsonDecode(response.body);
+    return data.map((json) => Video.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load videos');
   }
 }

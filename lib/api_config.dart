@@ -21,4 +21,5 @@ class ApiConfig {
       '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
   static const String updateUserProfileUrl =
       '$baseUrl/daawatokug/auth/updateUserProfile.php';
+  static const String fetchVideosUrl = '$baseUrl/daawatokug/fetchvideos.php';
 }
