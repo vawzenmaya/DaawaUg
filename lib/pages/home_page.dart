@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -59,9 +61,9 @@ class Video {
 }
 
 class Comment {
-  final String commentId;
-  final String userId;
-  final String videoId;
+  final int commentId;
+  final int userId;
+  final int videoId;
   final String comment;
   final String dateCommented;
   final String username;
@@ -233,59 +235,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   bool _isFavorite = false;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _commentController = TextEditingController();
+  String? _userId;
 
-  Future<void> fetchComments() async {
-    try {
-      String videoid = widget.video.videoId;
-      final response = await http.get(
-        Uri.parse(ApiConfig.fetchCommentsUrl(videoid)),
-      );
-
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        jsonResponse.map((item) async {
-          Comment comment = Comment.fromJson(item);
-
-          return {
-            'id': comment.commentId,
-            'email': comment.userId,
-            'message': comment.videoId,
-            'timestamp': comment.comment,
-            'timestam': comment.dateCommented,
-          };
-        }).toList();
-      } else {
-        throw Exception('Failed to load data: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Handle error
-    }
+  String formatDate(String date) {
+    final DateTime parsedDate = DateTime.parse(date);
+    final DateFormat formatter = DateFormat('dd-MMM-yyyy');
+    return formatter.format(parsedDate);
   }
 
-  Future<void> sendComment(String videoId) async {
+  Future<String?> getUserId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('userID');
-
-    final url = Uri.parse(ApiConfig.sendCommentUrl);
-    final response = await http.post(
-      url,
-      body: {
-        'userid': userId,
-        'videoid': videoId,
-        'comment': _commentController.text,
-      },
-    );
-    if (response.statusCode == 200) {
-      final responseData = json.decode(response.body);
-      if (responseData['success']) {
-        Get.snackbar('Successfully', "Commented");
-      } else {
-        Get.snackbar('Sorry', "Unknown error happened");
-      }
-    } else {
-      // Handle the server error
-      // print('Server error: ${response.statusCode}');
-    }
+    return prefs.getString('userID');
   }
 
   @override
@@ -300,6 +260,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         _controller.play();
         _controller.setLooping(true);
       });
+    getUserId().then((userId) {
+      setState(() {
+        _userId = userId;
+      });
+    });
   }
 
   @override
@@ -319,6 +284,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     DateFormat dateFormat = DateFormat('dd-MMM-yyyy');
     String formattedDatePosted =
         dateFormat.format(DateTime.parse(widget.video.datePosted));
+
     if (_controller.value.isInitialized) {
       return Stack(
         alignment: Alignment.bottomCenter,
@@ -437,101 +403,281 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     GestureDetector(
                       onTap: () {
                         Get.bottomSheet(
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Comments",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 5),
-                                // if (_comments.isNotEmpty)
-
-                                // else
-                                const Text(
-                                  "No comments yet\nBe the first to comment",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.grey),
-                                ),
-                                Form(
-                                  key: _formKey,
-                                  child: Column(
+                          SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Stack(
-                                        alignment: Alignment.centerRight,
-                                        children: [
-                                          TextFormField(
-                                            controller: _commentController,
-                                            keyboardType:
-                                                TextInputType.multiline,
-                                            maxLines: null,
-                                            maxLength: 500,
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w300),
-                                            decoration: const InputDecoration(
-                                              labelText: 'Comment',
-                                              labelStyle:
-                                                  TextStyle(color: Colors.grey),
-                                              border: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.grey),
-                                              ),
-                                              focusedBorder:
-                                                  UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.greenAccent,
-                                                    width: 1),
-                                              ),
-                                            ),
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return 'Please type your comment';
-                                              }
-                                              return null;
+                                      Text(
+                                        "Comments",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 5),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    child: FutureBuilder<List<Comment>>(
+                                      future: fetchComments(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        } else if (snapshot.hasError) {
+                                          return Center(
+                                              child: Text(
+                                                  'Error: ${snapshot.error}'));
+                                        } else if (!snapshot.hasData ||
+                                            snapshot.data!.isEmpty) {
+                                          return const Center(
+                                              child: Text(
+                                            'No comments yet\nBe the first to comment',
+                                            style: TextStyle(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 16),
+                                            textAlign: TextAlign.center,
+                                          ));
+                                        } else {
+                                          List<Comment> comments =
+                                              snapshot.data!;
+                                          comments = comments.reversed.toList();
+                                          return ListView.builder(
+                                            itemCount: comments.length,
+                                            itemBuilder: (context, index) {
+                                              Comment comment = comments[index];
+                                              return Card(
+                                                color: Colors.white,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Column(
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {},
+                                                        child: Row(
+                                                          children: [
+                                                            if (comment
+                                                                    .profilePic ==
+                                                                ApiConfig
+                                                                    .emptyProfilePicUrl)
+                                                              Container(
+                                                                width: 45,
+                                                                height: 45,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child:
+                                                                    const ClipOval(
+                                                                  child: Icon(
+                                                                    Icons
+                                                                        .person,
+                                                                    color: Colors
+                                                                        .white,
+                                                                    size: 45,
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            else
+                                                              Container(
+                                                                width: 45,
+                                                                height: 45,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                ),
+                                                                child: ClipOval(
+                                                                  child: Image
+                                                                      .network(
+                                                                    comment
+                                                                        .profilePic,
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            const SizedBox(
+                                                                width: 10),
+                                                            if (comment
+                                                                    .fullNames ==
+                                                                "")
+                                                              Text(
+                                                                "@${comment.username}",
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        18),
+                                                              )
+                                                            else
+                                                              Text(
+                                                                comment
+                                                                    .fullNames,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    fontSize:
+                                                                        18),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            comment.comment,
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .black),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          Text(
+                                                            formatDate(comment
+                                                                .dateCommented),
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .grey),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      if (comment.userId
+                                                              .toString() ==
+                                                          _userId)
+                                                        Row(
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: () {
+                                                                deleteComment(comment
+                                                                    .commentId
+                                                                    .toString());
+                                                              },
+                                                              child: const Text(
+                                                                "Delete",
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
                                             },
-                                          ),
-                                          Positioned(
-                                            right: 0,
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  top: 10.0, bottom: 10.0),
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  sendComment(
-                                                      widget.video.videoId);
-                                                },
-                                                child: const Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Icon(
-                                                    Icons.send,
-                                                    color: Colors.greenAccent,
-                                                    size: 25,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  Form(
+                                    key: _formKey,
+                                    child: Column(
+                                      children: [
+                                        Stack(
+                                          alignment: Alignment.centerRight,
+                                          children: [
+                                            TextFormField(
+                                              controller: _commentController,
+                                              keyboardType:
+                                                  TextInputType.multiline,
+                                              maxLines: null,
+                                              maxLength: 500,
+                                              style: const TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w300),
+                                              decoration: const InputDecoration(
+                                                labelText: 'Comment',
+                                                labelStyle: TextStyle(
+                                                    color: Colors.grey),
+                                                border: UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.grey),
+                                                ),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                  borderSide: BorderSide(
+                                                      color: Colors.greenAccent,
+                                                      width: 1),
+                                                ),
+                                              ),
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return 'Please type your comment';
+                                                }
+                                                return null;
+                                              },
+                                            ),
+                                            Positioned(
+                                              right: 0,
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10.0, bottom: 10.0),
+                                                child: GestureDetector(
+                                                  onTap: () {
+                                                    sendComment(
+                                                        widget.video.videoId);
+                                                  },
+                                                  child: const Padding(
+                                                    padding:
+                                                        EdgeInsets.all(8.0),
+                                                    child: Icon(
+                                                      Icons.send,
+                                                      color: Colors.greenAccent,
+                                                      size: 25,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           backgroundColor: Colors.white,
+                          isScrollControlled: true,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             side: const BorderSide(
@@ -810,6 +956,118 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     } else {
       // print('Server error: ${response.statusCode}');
     }
+  }
+
+  Future<List<Comment>> fetchComments() async {
+    String videoid = widget.video.videoId;
+    final response =
+        await http.get(Uri.parse(ApiConfig.fetchCommentsUrl(videoid)));
+
+    if (response.statusCode == 200) {
+      List<dynamic> body = json.decode(response.body);
+      List<Comment> comments =
+          body.map((dynamic item) => Comment.fromJson(item)).toList();
+      return comments;
+    } else {
+      throw Exception('Failed to load comments');
+    }
+  }
+
+  Future<void> sendComment(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.sendCommentUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+        'comment': _commentController.text,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          widget.video.commentCount = widget.video.commentCount + 1;
+        });
+        Get.snackbar('Successfully', "Commented on this video");
+        _commentController.clear();
+        Navigator.pop(context);
+      } else {
+        Get.snackbar('Sorry', "Unknown error happened");
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> deleteComment(String commentId) async {
+    String videoId = widget.video.videoId;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+    Get.defaultDialog(
+      title: 'Delete Comment',
+      titleStyle:
+          const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      content: const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          'Are you sure you want to delete this comment?',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+        ),
+      ),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            TextButton(
+              onPressed: () {
+                Get.back(result: false);
+              },
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.greenAccent),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Get.back(result: true);
+                final url = Uri.parse(ApiConfig.deleteCommentUrl);
+                final response = await http.post(
+                  url,
+                  body: {
+                    'userid': userId,
+                    'videoid': videoId,
+                    'commentid': commentId,
+                  },
+                );
+
+                if (response.statusCode == 200) {
+                  final responseData = json.decode(response.body);
+                  if (responseData['success']) {
+                    setState(() {
+                      widget.video.commentCount = widget.video.commentCount - 1;
+                    });
+                    Get.snackbar('Success', 'Comment deleted successfully');
+                    Navigator.pop(context);
+                  } else {
+                    Get.snackbar('Error', responseData['message']);
+                  }
+                } else {
+                  Get.snackbar('Error', 'Server error: ${response.statusCode}');
+                }
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   Future<void> sendFavorite(String videoId) async {

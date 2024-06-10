@@ -62,8 +62,6 @@ class ForgotPasswordPageEmail extends StatelessWidget {
                   Get.snackbar(
                     'Check your Email',
                     'Password reset link has been sent there',
-                    backgroundColor: Colors.grey,
-                    colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
                   );
                 },

@@ -59,8 +59,6 @@ class RegisterFinishEmail extends StatelessWidget {
             Get.snackbar(
               'Successfully',
               'Signed up with Email',
-              backgroundColor: Colors.grey,
-              colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               duration: const Duration(seconds: 5),
             );

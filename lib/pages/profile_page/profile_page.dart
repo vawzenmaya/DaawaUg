@@ -153,8 +153,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             Get.snackbar(
                               'Successfully',
                               'Logged out',
-                              backgroundColor: Colors.grey,
-                              colorText: Colors.white,
                               snackPosition: SnackPosition.TOP,
                               duration: const Duration(seconds: 5),
                             );

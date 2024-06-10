@@ -38,7 +38,9 @@ class ApiConfig {
       '$baseUrl/daawatokug/favorite_delete.php';
   static const String sendCommentUrl = "$baseUrl/daawatokug/comment_video.php";
   static String fetchCommentsUrl(String videoid) =>
-      '$baseUrl/daawatokug/comments_fetch.php?videoid=$videoid'; //Challenge Open
+      '$baseUrl/daawatokug/comments_fetch.php?videoid=$videoid';
+  static const String deleteCommentUrl =
+      '$baseUrl/daawatokug/comment_delete.php';
   static String getUserPostedViseosUrl(String userid) =>
       '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
 }

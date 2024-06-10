@@ -183,38 +183,45 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 5),
-                                  if (_fullNames != "")
-                                    Text(
-                                      _fullNames,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400),
-                                    )
-                                  else
-                                    Row(
-                                      children: [
-                                        const Text(
-                                          "Not yet set! - ",
+                                  Row(
+                                    children: [
+                                      if (_fullNames != "")
+                                        Text(
+                                          _fullNames,
                                           overflow: TextOverflow.ellipsis,
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.grey),
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Get.to(const EditProfilePage());
-                                          },
-                                          child: const Flexible(
-                                            child: Text(
-                                              "Click to Edit",
+                                          maxLines: 1,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w400),
+                                        )
+                                      else
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              "Not yet set! - ",
                                               overflow: TextOverflow.ellipsis,
                                               style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.grey),
                                             ),
-                                          ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Get.to(const EditProfilePage());
+                                              },
+                                              child: const Flexible(
+                                                child: Text(
+                                                  "Click to Edit",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ],
