@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +22,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String _username = '';
   String _fullNames = '';
   String _biography = '';
-  String _profilePic = '';
+  String _profilePic = ApiConfig.emptyProfilePicUrl;
 
   Future<void> fetchUserData() async {
     try {
@@ -183,7 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
         drawer: const ProfilePageDrawer(),
         body: Column(
           children: [
-            if (_profilePic != "")
+            if (_profilePic != ApiConfig.emptyProfilePicUrl)
               Container(
                 height: 100,
                 width: 100,
@@ -192,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Colors.grey,
                   image: DecorationImage(
                     image: NetworkImage(_profilePic),
-                    fit: BoxFit.fitHeight,
+                    fit: BoxFit.cover,
                   ),
                 ),
               )
@@ -374,12 +375,16 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   if (_biography != "")
-                    Text(
+                    ExpandableText(
                       _biography,
                       style: TextStyle(color: Colors.grey[700]),
                       textAlign: TextAlign.center,
+                      expandText: 'More',
+                      collapseText: 'Less',
+                      expandOnTextTap: true,
+                      collapseOnTextTap: true,
                       maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
+                      linkColor: Colors.blueGrey,
                     )
                   else
                     Text(

@@ -1,17 +1,27 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:marquee/marquee.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:video_player/video_player.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 
 class Video {
-  final String videoId;
+  late final String videoId;
   final String userId;
   final String videoName;
   final String description;
   final String datePosted;
   final String videoUrl;
+  final String userName;
+  final String fullNames;
+  final String profilePicUrl;
+  int likeCount;
+  int favoriteCount;
+  int commentCount;
 
   Video({
     required this.videoId,
@@ -20,6 +30,12 @@ class Video {
     required this.description,
     required this.datePosted,
     required this.videoUrl,
+    required this.userName,
+    required this.fullNames,
+    required this.profilePicUrl,
+    required this.likeCount,
+    required this.favoriteCount,
+    required this.commentCount,
   });
 
   factory Video.fromJson(Map<String, dynamic> json) {
@@ -30,13 +46,55 @@ class Video {
       description: json['description'],
       datePosted: json['dateposted'],
       videoUrl: json['videourl'],
+      userName: json['username'],
+      fullNames: json['fullNames'],
+      profilePicUrl: json['profilePic'],
+      likeCount: json['likeCount'] != null ? int.parse(json['likeCount']) : 0,
+      favoriteCount:
+          json['favoriteCount'] != null ? int.parse(json['favoriteCount']) : 0,
+      commentCount:
+          json['commentCount'] != null ? int.parse(json['commentCount']) : 0,
+    );
+  }
+}
+
+class Comment {
+  final String commentId;
+  final String userId;
+  final String videoId;
+  final String comment;
+  final String dateCommented;
+  final String username;
+  final String fullNames;
+  final String profilePic;
+
+  Comment({
+    required this.commentId,
+    required this.userId,
+    required this.videoId,
+    required this.comment,
+    required this.dateCommented,
+    required this.username,
+    required this.fullNames,
+    required this.profilePic,
+  });
+
+  factory Comment.fromJson(Map<String, dynamic> json) {
+    return Comment(
+      commentId: json['commentid'],
+      userId: json['userid'],
+      videoId: json['videoid'],
+      comment: json['comment'],
+      dateCommented: json['datecommented'],
+      username: json['username'],
+      fullNames: json['fullNames'],
+      profilePic: json['profilePic'],
     );
   }
 }
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -57,72 +115,79 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(0, 0, 50, 0),
-              child: Icon(
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
                 Icons.live_tv,
                 color: Colors.white,
                 size: 40,
               ),
             ),
-            GestureDetector(
-              onTap: () => {
-                setState(() {
-                  _isForYouSelected = true;
-                })
-              },
-              child: Text(
-                "For you",
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: _isForYouSelected ? 18 : 15,
-                      color: _isForYouSelected ? Colors.white : Colors.grey,
-                      fontWeight: _isForYouSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              GestureDetector(
+                onTap: () => {
+                  setState(() {
+                    _isForYouSelected = true;
+                  })
+                },
+                child: Text(
+                  "For you",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: _isForYouSelected ? 18 : 15,
+                        color: _isForYouSelected ? Colors.white : Colors.grey,
+                        fontWeight: _isForYouSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                ),
+              ),
+              Text(
+                "  |  ",
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyLarge!
+                    .copyWith(fontSize: 14, color: Colors.grey),
+              ),
+              GestureDetector(
+                onTap: () => {
+                  setState(() {
+                    _isForYouSelected = false;
+                  })
+                },
+                child: Text(
+                  "Following",
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        fontSize: !_isForYouSelected ? 18 : 15,
+                        color: !_isForYouSelected ? Colors.white : Colors.grey,
+                        fontWeight: !_isForYouSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+              child: IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.search,
+                  color: Colors.white,
+                  size: 40,
+                ),
               ),
             ),
-            Text(
-              "  |  ",
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyLarge!
-                  .copyWith(fontSize: 14, color: Colors.grey),
-            ),
-            GestureDetector(
-              onTap: () => {
-                setState(() {
-                  _isForYouSelected = false;
-                })
-              },
-              child: Text(
-                "Following",
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                      fontSize: !_isForYouSelected ? 18 : 15,
-                      color: !_isForYouSelected ? Colors.white : Colors.grey,
-                      fontWeight: !_isForYouSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
-              child: Icon(
-                Icons.search,
-                color: Colors.white,
-                size: 40,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ]),
       body: FutureBuilder<List<Video>>(
         future: futureVideos,
         builder: (context, snapshot) {
@@ -157,7 +222,6 @@ class _HomePageState extends State<HomePage> {
 class VideoPlayerWidget extends StatefulWidget {
   final Video video;
   const VideoPlayerWidget({super.key, required this.video});
-
   @override
   // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
@@ -165,10 +229,71 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
+  bool _isLiked = false;
+  bool _isFavorite = false;
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _commentController = TextEditingController();
+
+  Future<void> fetchComments() async {
+    try {
+      String videoid = widget.video.videoId;
+      final response = await http.get(
+        Uri.parse(ApiConfig.fetchCommentsUrl(videoid)),
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        jsonResponse.map((item) async {
+          Comment comment = Comment.fromJson(item);
+
+          return {
+            'id': comment.commentId,
+            'email': comment.userId,
+            'message': comment.videoId,
+            'timestamp': comment.comment,
+            'timestam': comment.dateCommented,
+          };
+        }).toList();
+      } else {
+        throw Exception('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Handle error
+    }
+  }
+
+  Future<void> sendComment(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.sendCommentUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+        'comment': _commentController.text,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        Get.snackbar('Successfully', "Commented");
+      } else {
+        Get.snackbar('Sorry', "Unknown error happened");
+      }
+    } else {
+      // Handle the server error
+      // print('Server error: ${response.statusCode}');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    fetchlike();
+    fetchfavorite();
+    fetchComments();
     _controller = VideoPlayerController.network(widget.video.videoUrl)
       ..initialize().then((_) {
         setState(() {});
@@ -191,174 +316,582 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _controller.value.isInitialized
-        ? Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              GestureDetector(
-                onTap: _togglePlayPause,
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+    DateFormat dateFormat = DateFormat('dd-MMM-yyyy');
+    String formattedDatePosted =
+        dateFormat.format(DateTime.parse(widget.video.datePosted));
+    if (_controller.value.isInitialized) {
+      return Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          GestureDetector(
+            onTap: _togglePlayPause,
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: VideoPlayer(_controller),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        const Spacer(),
-                        InkWell(
-                          onTap: () {},
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: ClipOval(
-                                  child: Image.asset(
-                                    "assets/p1.jpg",
-                                    fit: BoxFit.cover,
-                                  ),
+                    const Spacer(),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Stack(
+                        children: [
+                          if (widget.video.profilePicUrl ==
+                              ApiConfig.emptyProfilePicUrl)
+                            Container(
+                              width: 45,
+                              height: 45,
+                              decoration: const BoxDecoration(
+                                color: Colors.grey,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const ClipOval(
+                                child: Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 45,
                                 ),
                               ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(12.5, 30, 0, 0),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Colors.red,
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    size: 16,
-                                  ),
+                            )
+                          else
+                            Container(
+                              width: 45,
+                              height: 45,
+                              decoration: const BoxDecoration(
+                                color: Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: ClipOval(
+                                child: Image.network(
+                                  widget.video.profilePicUrl,
+                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ],
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 35, 0, 0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.greenAccent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.add,
+                                size: 16,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.favorite, size: 30),
-                        ),
-                        const Text(
-                          "517K",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.message, size: 30),
-                        ),
-                        const Text(
-                          "20K",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.bookmark, size: 30),
-                        ),
-                        const Text(
-                          "713",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.share, size: 30),
-                        ),
-                        const Text(
-                          "570",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                        const SizedBox(height: 12),
-                        InkWell(
-                          onTap: () {},
-                          child: const Icon(Icons.question_answer, size: 30),
-                        ),
-                        const Text(
-                          "573",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 10),
-                        ),
-                        const SizedBox(height: 50),
-                      ],
+                        ],
+                      ),
                     ),
+                    const SizedBox(height: 12),
+                    if (_isLiked == false)
+                      GestureDetector(
+                        onTap: () {
+                          sendLike(widget.video.videoId);
+                          setState(() {
+                            _isLiked = true;
+                            widget.video.likeCount = widget.video.likeCount + 1;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.favorite,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                      )
+                    else if (_isLiked == true)
+                      GestureDetector(
+                        onTap: () {
+                          deleteLike(widget.video.videoId);
+                          setState(() {
+                            _isLiked = false;
+                            widget.video.likeCount = widget.video.likeCount - 1;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.favorite,
+                          size: 30,
+                          color: Colors.red,
+                        ),
+                      ),
+                    if (widget.video.likeCount > 0)
+                      Text(
+                        widget.video.likeCount.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      )
+                    else
+                      const Text(
+                        "0",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      ),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: () {
+                        Get.bottomSheet(
+                          Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Comments",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                // if (_comments.isNotEmpty)
+
+                                // else
+                                const Text(
+                                  "No comments yet\nBe the first to comment",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Form(
+                                  key: _formKey,
+                                  child: Column(
+                                    children: [
+                                      Stack(
+                                        alignment: Alignment.centerRight,
+                                        children: [
+                                          TextFormField(
+                                            controller: _commentController,
+                                            keyboardType:
+                                                TextInputType.multiline,
+                                            maxLines: null,
+                                            maxLength: 500,
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w300),
+                                            decoration: const InputDecoration(
+                                              labelText: 'Comment',
+                                              labelStyle:
+                                                  TextStyle(color: Colors.grey),
+                                              border: UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.grey),
+                                              ),
+                                              focusedBorder:
+                                                  UnderlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: Colors.greenAccent,
+                                                    width: 1),
+                                              ),
+                                            ),
+                                            validator: (value) {
+                                              if (value!.isEmpty) {
+                                                return 'Please type your comment';
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                          Positioned(
+                                            right: 0,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10.0, bottom: 10.0),
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  sendComment(
+                                                      widget.video.videoId);
+                                                },
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(8.0),
+                                                  child: Icon(
+                                                    Icons.send,
+                                                    color: Colors.greenAccent,
+                                                    size: 25,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            side: const BorderSide(
+                              color: Colors.white,
+                              style: BorderStyle.solid,
+                              width: 2.0,
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Icon(Icons.message, size: 30),
+                    ),
+                    if (widget.video.commentCount > 0)
+                      Text(
+                        widget.video.commentCount.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      )
+                    else
+                      const Text(
+                        "0",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      ),
+                    const SizedBox(height: 12),
+                    if (_isFavorite == false)
+                      GestureDetector(
+                        onTap: () {
+                          sendFavorite(widget.video.videoId);
+                          setState(() {
+                            _isFavorite = true;
+                            widget.video.favoriteCount =
+                                widget.video.favoriteCount + 1;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.bookmark,
+                          size: 30,
+                          color: Colors.grey,
+                        ),
+                      )
+                    else if (_isFavorite == true)
+                      GestureDetector(
+                        onTap: () {
+                          deleteFavorite(widget.video.videoId);
+                          setState(() {
+                            _isFavorite = false;
+                            widget.video.favoriteCount =
+                                widget.video.favoriteCount - 1;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.bookmark,
+                          size: 30,
+                          color: Colors.yellow,
+                        ),
+                      ),
+                    if (widget.video.favoriteCount > 0)
+                      Text(
+                        widget.video.favoriteCount.toString(),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      )
+                    else
+                      const Text(
+                        "0",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 10),
+                      ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {},
+                      child: const Icon(Icons.share, size: 30),
+                    ),
+                    const Text(
+                      "Share",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () {},
+                      child: const Icon(Icons.question_answer, size: 30),
+                    ),
+                    const Text(
+                      "53K",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+                    ),
+                    const SizedBox(height: 50),
                   ],
                 ),
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Spacer(),
+                    Row(
                       children: [
-                        const Spacer(),
-                        Text(
-                          "@${widget.video.userId}",
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        const SizedBox(height: 5),
+                        if (widget.video.fullNames != "")
+                          Text(
+                            widget.video.fullNames,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          )
+                        else
+                          Text(
+                            "@${widget.video.userName}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    SizedBox(
+                      width: 250,
+                      child: ExpandableText(
+                        widget.video.description,
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w300),
+                        expandText: 'More',
+                        collapseText: 'Less',
+                        expandOnTextTap: true,
+                        collapseOnTextTap: true,
+                        maxLines: 3,
+                        linkColor: Colors.blueGrey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
                         SizedBox(
-                          width: 250,
-                          child: ExpandableText(
-                            "${widget.video.videoName}\n${widget.video.description}\nDate Posted: ${widget.video.datePosted}",
+                          width: 100,
+                          height: 20,
+                          child: Marquee(
+                            text: widget.video.videoName,
                             style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w300),
-                            expandText: 'Expand',
-                            collapseText: 'Minimize',
-                            expandOnTextTap: true,
-                            collapseOnTextTap: true,
-                            maxLines: 3,
-                            linkColor: Colors.grey,
+                            scrollAxis: Axis.horizontal,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            blankSpace: 20.0,
+                            velocity: 100.0,
+                            pauseAfterRound: const Duration(seconds: 1),
+                            startPadding: 10.0,
+                            accelerationDuration: const Duration(seconds: 1),
+                            accelerationCurve: Curves.linear,
+                            decelerationDuration:
+                                const Duration(milliseconds: 500),
+                            decelerationCurve: Curves.easeOut,
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        )
+                        const SizedBox(width: 5),
+                        Text(
+                          "- $formattedDatePosted",
+                          style: const TextStyle(color: Colors.grey),
+                        ),
                       ],
                     ),
-                  )
-                ],
-              ),
-              VideoProgressIndicator(
-                _controller,
-                allowScrubbing: true,
-                colors: const VideoProgressColors(
-                  playedColor: Colors.greenAccent,
-                  backgroundColor: Colors.grey,
-                  bufferedColor: Colors.white,
+                    const SizedBox(
+                      height: 10,
+                    )
+                  ],
                 ),
-              ),
+              )
             ],
-          )
-        : const Center(
-            child: SizedBox(
-              width: 40,
-              height: 40,
-              child: CircularProgressIndicator(
-                color: Colors.lightGreenAccent,
-                backgroundColor: Colors.greenAccent,
-              ),
+          ),
+          VideoProgressIndicator(
+            _controller,
+            allowScrubbing: true,
+            colors: const VideoProgressColors(
+              playedColor: Colors.greenAccent,
+              backgroundColor: Colors.grey,
+              bufferedColor: Colors.white,
             ),
-          );
+          ),
+        ],
+      );
+    } else {
+      return const Center(
+        child: SizedBox(
+          width: 40,
+          height: 40,
+          child: CircularProgressIndicator(
+            color: Colors.lightGreenAccent,
+            backgroundColor: Colors.greenAccent,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> sendLike(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.likeVideoUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isLiked = true;
+        });
+      } else {
+        // print('Failed to add like: ${responseData['message']}');
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> fetchlike() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.checkLikesUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': widget.video.videoId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isLiked = true;
+        });
+      } else {
+        setState(() {
+          _isLiked = false;
+        });
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> deleteLike(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.deletelikeUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isLiked = false;
+        });
+      } else {
+        // print('Failed to delete like: ${responseData['message']}');
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> sendFavorite(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.favoriteVideoUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+      },
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isFavorite = true;
+        });
+      } else {
+        // print('Failed to add like: ${responseData['message']}');
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> fetchfavorite() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.checkFavoritesUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': widget.video.videoId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isFavorite = true;
+        });
+      } else {
+        setState(() {
+          _isFavorite = false;
+        });
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
+  }
+
+  Future<void> deleteFavorite(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    final url = Uri.parse(ApiConfig.deleteFavoriteUrl);
+    final response = await http.post(
+      url,
+      body: {
+        'userid': userId,
+        'videoid': videoId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      if (responseData['success']) {
+        setState(() {
+          _isFavorite = false;
+        });
+      } else {
+        // print('Failed to delete like: ${responseData['message']}');
+      }
+    } else {
+      // print('Server error: ${response.statusCode}');
+    }
   }
 }
 

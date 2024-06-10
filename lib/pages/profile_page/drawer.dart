@@ -21,7 +21,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
   String _email = '';
   String _phoneNumber = '';
   String _biography = '';
-  String _profilePic = '';
+  String _profilePic = ApiConfig.emptyProfilePicUrl;
   //String _role = '';
 
   Future<void> fetchUserData() async {
@@ -116,7 +116,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                           const SizedBox(height: 15),
                           Row(
                             children: [
-                              if (_profilePic != "")
+                              if (_profilePic != ApiConfig.emptyProfilePicUrl)
                                 Container(
                                   height: 80,
                                   width: 80,
@@ -125,7 +125,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                                     color: Colors.white,
                                     image: DecorationImage(
                                       image: NetworkImage(_profilePic),
-                                      fit: BoxFit.fitHeight,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
                                 )

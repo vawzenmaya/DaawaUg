@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:toktok/auth/signin.dart';
-//import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/bottom_menu.dart';
@@ -24,7 +23,6 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'DaawaTok UG Application',
-      //theme: ThemeData(textTheme: GoogleFonts.varelaRoundTextTheme()),
       theme: ThemeData.dark(),
       home: const SplashScreen(),
     );
@@ -77,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const Spacer(),
             const Text(
-              'FROM',
+              'from',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
             const SizedBox(height: 5),

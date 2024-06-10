@@ -6,7 +6,7 @@
 
 class ApiConfig {
   static const String baseUrl =
-      'https://daawaug.000webhostapp.com'; // Replace IP address
+      'https://daawatoktok.000webhostapp.com'; // Replace IP address
 
   // API endpoints
   static const String signinUrl = '$baseUrl/daawatokug/auth/signin.php';
@@ -20,6 +20,25 @@ class ApiConfig {
   static String getUserDataUrl(String userid) =>
       '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
   static const String updateUserProfileUrl =
-      '$baseUrl/daawatokug/auth/updateUserProfile.php';
+      '$baseUrl/daawatokug/auth/updateprofile.php';
+  static const String updateUserProfilePicUrl =
+      '$baseUrl/daawatokug/profilePics/profilepic.php';
+  static const String deleteUserProfilePicUrl =
+      '$baseUrl/daawatokug/profilePics/deletepic.php';
+  static const String emptyProfilePicUrl = '$baseUrl/daawatokug/profilePics/';
   static const String fetchVideosUrl = '$baseUrl/daawatokug/fetchvideos.php';
+  static const String likeVideoUrl = '$baseUrl/daawatokug/like_video.php';
+  static const String checkLikesUrl = '$baseUrl/daawatokug/likes_check.php';
+  static const String deletelikeUrl = '$baseUrl/daawatokug/like_delete.php';
+  static const String favoriteVideoUrl =
+      '$baseUrl/daawatokug/favorite_video.php';
+  static const String checkFavoritesUrl =
+      '$baseUrl/daawatokug/favorites_check.php';
+  static const String deleteFavoriteUrl =
+      '$baseUrl/daawatokug/favorite_delete.php';
+  static const String sendCommentUrl = "$baseUrl/daawatokug/comment_video.php";
+  static String fetchCommentsUrl(String videoid) =>
+      '$baseUrl/daawatokug/comments_fetch.php?videoid=$videoid'; //Challenge Open
+  static String getUserPostedViseosUrl(String userid) =>
+      '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
 }
