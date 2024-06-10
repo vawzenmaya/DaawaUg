@@ -98,6 +98,7 @@ flutter:
     - assets/videos/v2.mp4
     - assets/videos/v3.mp4
     - assets/videos/v4.mp4
+    - assets/upload.png
     # - assets/donate_filled.svg
     - assets/message.svg
     # - assets/message_filled.svg
