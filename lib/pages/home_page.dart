@@ -528,7 +528,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                         FontWeight
                                                                             .w500,
                                                                     fontSize:
-                                                                        18),
+                                                                        16),
                                                               )
                                                             else
                                                               Text(
@@ -541,7 +541,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                         FontWeight
                                                                             .w500,
                                                                     fontSize:
-                                                                        18),
+                                                                        16),
                                                               ),
                                                           ],
                                                         ),
@@ -1009,8 +1009,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     String? userId = prefs.getString('userID');
     Get.defaultDialog(
       title: 'Delete Comment',
-      titleStyle:
-          const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      titleStyle: const TextStyle(
+          color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
       content: const Padding(
         padding: EdgeInsets.all(8.0),
         child: Text(

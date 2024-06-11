@@ -41,6 +41,6 @@ class ApiConfig {
       '$baseUrl/daawatokug/comments_fetch.php?videoid=$videoid';
   static const String deleteCommentUrl =
       '$baseUrl/daawatokug/comment_delete.php';
-  static String getUserPostedViseosUrl(String userid) =>
+  static String getUserPostedVideosUrl(String userid) =>
       '$baseUrl/daawatokug/auth/fetchUserData.php?userid=$userid';
 }
