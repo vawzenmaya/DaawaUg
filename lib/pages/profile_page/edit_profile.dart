@@ -99,8 +99,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             Get.snackbar(
               'Success',
               'Profile updated successfully',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
             );
           } else {

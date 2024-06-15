@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
@@ -15,6 +16,7 @@ class Video {
   late final String videoId;
   final String userId;
   final String videoName;
+  final String videoTitle;
   final String description;
   final String datePosted;
   final String videoUrl;
@@ -29,6 +31,7 @@ class Video {
     required this.videoId,
     required this.userId,
     required this.videoName,
+    required this.videoTitle,
     required this.description,
     required this.datePosted,
     required this.videoUrl,
@@ -45,6 +48,7 @@ class Video {
       videoId: json['videoid'],
       userId: json['userid'],
       videoName: json['videoname'],
+      videoTitle: json['videotitle'],
       description: json['description'],
       datePosted: json['dateposted'],
       videoUrl: json['videourl'],
@@ -431,9 +435,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
+                                          return Center(
+                                              child: Lottie.asset(
+                                            'assets/loading.json',
+                                            width: 100,
+                                            height: 100,
+                                            fit: BoxFit.cover,
+                                          ));
                                         } else if (snapshot.hasError) {
                                           return Center(
                                               child: Text(
@@ -463,6 +471,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                   padding:
                                                       const EdgeInsets.all(8.0),
                                                   child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       GestureDetector(
                                                         onTap: () {},
@@ -529,6 +540,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                             .w500,
                                                                     fontSize:
                                                                         16),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               )
                                                             else
                                                               Text(
@@ -542,43 +556,38 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                             .w500,
                                                                     fontSize:
                                                                         16),
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
                                                           ],
                                                         ),
                                                       ),
                                                       const SizedBox(
                                                           height: 10),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            comment.comment,
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .black),
-                                                          )
-                                                        ],
+                                                      ExpandableText(
+                                                        comment.comment,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black),
+                                                        expandText: 'More',
+                                                        collapseText: 'Less',
+                                                        expandOnTextTap: true,
+                                                        collapseOnTextTap: true,
+                                                        maxLines: 4,
+                                                        linkColor:
+                                                            Colors.blueGrey,
                                                       ),
+                                                      const SizedBox(
+                                                          height: 10),
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
-                                                                .end,
+                                                                .spaceBetween,
                                                         children: [
-                                                          Text(
-                                                            formatDate(comment
-                                                                .dateCommented),
-                                                            style:
-                                                                const TextStyle(
-                                                                    color: Colors
-                                                                        .grey),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      if (comment.userId
-                                                              .toString() ==
-                                                          _userId)
-                                                        Row(
-                                                          children: [
+                                                          if (comment.userId
+                                                                  .toString() ==
+                                                              _userId)
                                                             GestureDetector(
                                                               onTap: () {
                                                                 deleteComment(comment
@@ -595,8 +604,18 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                             .w500),
                                                               ),
                                                             )
-                                                          ],
-                                                        )
+                                                          else
+                                                            const Text(""),
+                                                          Text(
+                                                            formatDate(comment
+                                                                .dateCommented),
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .grey),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ],
                                                   ),
                                                 ),
@@ -788,12 +807,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             widget.video.fullNames,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
                           )
                         else
                           Text(
                             "@${widget.video.userName}",
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18),
+                            overflow: TextOverflow.ellipsis,
                           ),
                       ],
                     ),
@@ -801,7 +822,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     SizedBox(
                       width: 250,
                       child: ExpandableText(
-                        widget.video.description,
+                        "${widget.video.videoTitle}\n${widget.video.description}",
                         style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w300),
                         expandText: 'More',
@@ -863,13 +884,13 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         ],
       );
     } else {
-      return const Center(
+      return Center(
         child: SizedBox(
-          width: 40,
-          height: 40,
-          child: CircularProgressIndicator(
-            color: Colors.lightGreenAccent,
-            backgroundColor: Colors.greenAccent,
+          child: Lottie.asset(
+            'assets/loading.json',
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
           ),
         ),
       );

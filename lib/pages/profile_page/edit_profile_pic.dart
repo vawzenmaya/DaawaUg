@@ -87,8 +87,6 @@ class _EditProfilePicState extends State<EditProfilePic> {
           Get.snackbar(
             'Success',
             'Profile Picture updated successfully',
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
           );
         } else {
@@ -175,8 +173,6 @@ class _EditProfilePicState extends State<EditProfilePic> {
               Get.snackbar(
                 'Success',
                 'Profile picture deleted successfully',
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
                 snackPosition: SnackPosition.TOP,
               );
             } else {
