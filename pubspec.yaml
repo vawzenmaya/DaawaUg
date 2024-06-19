@@ -30,6 +30,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.0.5
+  intl: ^0.17.0
   
   expandable_text: ^2.2.0
   marquee: ^2.2.0
@@ -99,6 +101,11 @@ flutter:
     - assets/videos/v3.mp4
     - assets/videos/v4.mp4
     - assets/upload.png
+    - assets/cat.jpg
+    - assets/kasule.jpg
+    - assets/kinataama.jpg
+    - assets/lauren.jpg
+
     # - assets/donate_filled.svg
     - assets/message.svg
     # - assets/message_filled.svg
