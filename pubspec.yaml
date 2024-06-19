@@ -93,9 +93,9 @@ flutter:
     - assets/images/avatarx.PNG
     - assets/upload.png
     # - assets/donate_filled.svg
-    - assets/message.svg
+    # - assets/message.svg
     # - assets/message_filled.svg
-    - assets/user.svg
+    # - assets/user.svg
     # - assets/user_filled.svg
 
   #   - images/a_dot_ham.jpeg
