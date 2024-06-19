@@ -82,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const Spacer(),
             const Text(
-              'FROM',
+              'from',
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
             ),
             const SizedBox(height: 5),

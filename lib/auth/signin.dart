@@ -51,8 +51,6 @@ class _SignInPageState extends State<SignInPage> {
           Get.snackbar(
             'Successfully',
             'Signed In',
-            backgroundColor: Colors.grey,
-            colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
             duration: const Duration(seconds: 5),
           );

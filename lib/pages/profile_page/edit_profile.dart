@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/username_text_formatters.dart';
+import 'package:toktok/bottom_menu.dart';
 import 'package:toktok/pages/profile_page/edit_profile_pic.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -17,6 +18,7 @@ class EditProfilePage extends StatefulWidget {
 class _EditProfilePageState extends State<EditProfilePage> {
   String _email = '';
   String _phoneNumber = '';
+  String _profilePic = ApiConfig.emptyProfilePicUrl;
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _fullNamesController = TextEditingController();
@@ -49,6 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _emailController.text = userData['email'];
             _email = userData['email'] ?? 'No email';
             _phoneNumber = userData['phoneNumber'] ?? '';
+            _profilePic = userData['profilePic'] ?? '';
           });
         } else {
           Get.snackbar(
@@ -92,12 +95,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
           final responseData = json.decode(response.body);
           if (response.statusCode == 200 &&
               responseData['status'] == 'success') {
-            Get.back();
+            Get.to(const BottomMainMenu());
             Get.snackbar(
               'Success',
               'Profile updated successfully',
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
             );
           } else {
@@ -161,8 +162,60 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    const EditProfilePic(),
-                    const SizedBox(height: 20),
+                    Stack(
+                      children: [
+                        if (_profilePic != ApiConfig.emptyProfilePicUrl)
+                          Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(60),
+                              color: Colors.white,
+                              image: DecorationImage(
+                                image: NetworkImage(_profilePic),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                        else
+                          Container(
+                            width: 100,
+                            height: 100,
+                            decoration: const BoxDecoration(
+                              color: Colors.grey,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const ClipOval(
+                                child: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                              size: 100,
+                            )),
+                          ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(60, 80, 0, 0),
+                          child: GestureDetector(
+                            onTap: () {
+                              Get.to(const EditProfilePic());
+                            },
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Padding(
+                                padding: EdgeInsets.all(2.0),
+                                child: Icon(
+                                  Icons.add,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
                     TextFormField(
                       controller: _usernameController,
                       maxLength: 25,
@@ -213,6 +266,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     TextFormField(
                       controller: _biographyController,
+                      keyboardType: TextInputType.multiline,
                       maxLines: null,
                       maxLength: 150,
                       style: const TextStyle(
@@ -343,7 +397,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           ),
                         ),
                       ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: _saveChanges,
                       style: ElevatedButton.styleFrom(

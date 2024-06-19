@@ -60,8 +60,6 @@ class RegisterFinishPhone extends StatelessWidget {
             Get.snackbar(
               'Successfully',
               'Signed up with Phone Number',
-              backgroundColor: Colors.grey,
-              colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               duration: const Duration(seconds: 5),
             );

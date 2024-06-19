@@ -31,8 +31,6 @@ class ResetPasswordPhone extends StatelessWidget {
             Get.snackbar(
               'Successfully',
               'Changed your password',
-              backgroundColor: Colors.grey,
-              colorText: Colors.white,
               snackPosition: SnackPosition.TOP,
               duration: const Duration(seconds: 5),
             );
