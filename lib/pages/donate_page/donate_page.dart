@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'payment_option.dart';
 import 'package:toktok/widgets/input_text_widget.dart';
 
 class DonatePage extends StatefulWidget {
@@ -12,11 +13,19 @@ class DonatePage extends StatefulWidget {
 class _DonatePageState extends State<DonatePage> {
   TextEditingController donationTextEditingController = TextEditingController();
   bool isGiveOnceActive = true;
-  int selectedAmount = 50;
-  final List<int> giveOnceAmounts = [1000, 500, 250, 100, 50, 20];
-  final List<int> giveMonthlyAmounts = [200, 100, 50, 30, 20, 10];
+  int selectedAmount = 5000;
+  final List<int> giveOnceAmounts = [100000, 50000, 25000, 10000, 5000, 2000];
+  final List<int> giveMonthlyAmounts = [
+    200000,
+    100000,
+    50000,
+    30000,
+    20000,
+    10000
+  ];
 
-  List<int> get donationAmounts => isGiveOnceActive ? giveOnceAmounts : giveMonthlyAmounts;
+  List<int> get donationAmounts =>
+      isGiveOnceActive ? giveOnceAmounts : giveMonthlyAmounts;
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +55,12 @@ class _DonatePageState extends State<DonatePage> {
                   onPressed: () {
                     setState(() {
                       isGiveOnceActive = true;
-                      selectedAmount = giveOnceAmounts[4]; // Default to 50
+                      selectedAmount = giveOnceAmounts[4]; // Default to 5000
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isGiveOnceActive ? Colors.orange : Colors.white,
+                    backgroundColor:
+                        isGiveOnceActive ? Colors.orange : Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 18.0),
                   ),
@@ -63,7 +73,7 @@ class _DonatePageState extends State<DonatePage> {
                   ),
                 ),
               ),
-        
+
               // Give Monthly
               Container(
                 margin: const EdgeInsets.only(bottom: 16.0),
@@ -71,11 +81,12 @@ class _DonatePageState extends State<DonatePage> {
                   onPressed: () {
                     setState(() {
                       isGiveOnceActive = false;
-                      selectedAmount = giveMonthlyAmounts[4]; // Default to 20
+                      selectedAmount = giveMonthlyAmounts[4]; // Default to 20000
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isGiveOnceActive ? Colors.white : Colors.green,
+                    backgroundColor:
+                        isGiveOnceActive ? Colors.white : Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 18.0),
                   ),
@@ -88,45 +99,45 @@ class _DonatePageState extends State<DonatePage> {
                   ),
                 ),
               ),
-        
+
               // Donation Amount Buttons
               GridView.count(
-              crossAxisCount: 3,
-              shrinkWrap: true,
-              mainAxisSpacing: 8.0,
-              crossAxisSpacing: 8.0,
-              children: donationAmounts.map((amount) {
-                return ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      selectedAmount = amount;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: selectedAmount == amount
-                        ? (isGiveOnceActive ? Colors.orange : Colors.green)
-                        : Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
-                    textStyle: const TextStyle(fontSize: 16.0),
-                  ),
-                  child: Text(
-                    '\$$amount',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      color: selectedAmount == amount
-                          ? Colors.white
-                          : (isGiveOnceActive ? Colors.orange : Colors.green),
+                crossAxisCount: 3,
+                shrinkWrap: true,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                children: donationAmounts.map((amount) {
+                  return ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        selectedAmount = amount;
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: selectedAmount == amount
+                          ? (isGiveOnceActive ? Colors.orange : Colors.green)
+                          : Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12.0, horizontal: 24.0),
+                      textStyle: const TextStyle(fontSize: 16.0),
                     ),
-                  ),
-                );
-              }).toList(),
-            ),
-        
-        
+                    child: Text(
+                      '$amount\n UGX',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w400,
+                        color: selectedAmount == amount
+                            ? Colors.white
+                            : (isGiveOnceActive ? Colors.orange : Colors.green),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+
               const SizedBox(
                 height: 10,
               ),
-        
+
               Container(
                 width: MediaQuery.of(context).size.width,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -137,33 +148,40 @@ class _DonatePageState extends State<DonatePage> {
                   isObscure: false,
                 ),
               ),
-        
+
               // Description
               Text(
                 'Thank you for your Donation',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
               ),
-        
+
               // Donate Button
               Container(
                 margin: const EdgeInsets.only(top: 32.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PaymentOption(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isGiveOnceActive ? Colors.orange : Colors.green,
+                    backgroundColor:
+                        isGiveOnceActive ? Colors.orange : Colors.green,
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     textStyle: const TextStyle(fontSize: 20.0),
                   ),
                   child: Text(
-                    'DONATE \$$selectedAmount ${isGiveOnceActive ? 'TODAY' : 'MONTHLY'}',
+                    'DONATE UGX$selectedAmount ${isGiveOnceActive ? 'TODAY' : 'MONTHLY'}',
                     style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900),
+                        color: Colors.white, fontWeight: FontWeight.w900),
                   ),
                 ),
               ),
-        
+
               // Security Notice
               Container(
                 margin: const EdgeInsets.only(top: 16.0),
@@ -172,7 +190,8 @@ class _DonatePageState extends State<DonatePage> {
                   children: [
                     Icon(Icons.lock, size: 16.0),
                     SizedBox(width: 4.0),
-                    Text('100% Safe & Secure', style: TextStyle(fontSize: 12.0)),
+                    Text('100% Safe & Secure',
+                        style: TextStyle(fontSize: 12.0)),
                   ],
                 ),
               ),
