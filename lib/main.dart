@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/bottom_menu.dart';
 import 'package:provider/provider.dart';
-import 'package:toktok/pages/chat_provider.dart';
+import 'package:toktok/pages/inbox_page/chat_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

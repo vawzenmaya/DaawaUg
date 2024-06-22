@@ -81,7 +81,8 @@ class _DonatePageState extends State<DonatePage> {
                   onPressed: () {
                     setState(() {
                       isGiveOnceActive = false;
-                      selectedAmount = giveMonthlyAmounts[4]; // Default to 20000
+                      selectedAmount =
+                          giveMonthlyAmounts[4]; // Default to 20000
                     });
                   },
                   style: ElevatedButton.styleFrom(
