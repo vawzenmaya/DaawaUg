@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
-import 'package:toktok/pages/chat_provider.dart';
+import 'package:toktok/pages/inbox_page/chat_provider.dart';
 import 'chat_page.dart';
 
 class InboxPage extends StatelessWidget {
@@ -37,15 +37,14 @@ class InboxPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageItem(BuildContext context, ChatProvider chatProvider, String userName) {
+  Widget _buildMessageItem(
+      BuildContext context, ChatProvider chatProvider, String userName) {
     final lastMessage = chatProvider.getLastMessage(userName);
     return MessageItem(
       profileImage: 'assets/${userName.toLowerCase()}.jpg',
       name: userName,
       message: lastMessage?.text ?? 'No messages yet',
-      time: lastMessage != null
-          ? _formatDateTime(lastMessage.dateTime)
-          : '',
+      time: lastMessage != null ? _formatDateTime(lastMessage.dateTime) : '',
       onTap: () => _navigateToChat(context, userName),
     );
   }
@@ -63,7 +62,9 @@ class InboxPage extends StatelessWidget {
     DateTime parsedDateTime = DateTime.parse(dateTime);
     DateTime now = DateTime.now();
 
-    if (parsedDateTime.year == now.year && parsedDateTime.month == now.month && parsedDateTime.day == now.day) {
+    if (parsedDateTime.year == now.year &&
+        parsedDateTime.month == now.month &&
+        parsedDateTime.day == now.day) {
       return DateFormat('h:mm a').format(parsedDateTime);
     } else {
       return DateFormat('M/d/yyyy').format(parsedDateTime);

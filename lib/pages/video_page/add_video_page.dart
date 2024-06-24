@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:toktok/pages/upload_screen.dart';
+import 'package:toktok/pages/video_page/upload_screen.dart';
 
 class AddVideoPage extends StatefulWidget {
   const AddVideoPage({super.key});

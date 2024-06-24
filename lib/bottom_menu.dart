@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:toktok/pages/add_video_page.dart';
-import 'package:toktok/pages/donate_page.dart';
+import 'package:toktok/pages/video_page/add_video_page.dart';
+import 'package:toktok/pages/donate_page/donate_page.dart';
 import 'package:toktok/pages/home_page.dart';
-import 'package:toktok/pages/inbox_page.dart';
+import 'package:toktok/pages/inbox_page/inbox_page.dart';
 import 'package:toktok/pages/profile_page/profile_page.dart';
 
 class BottomMainMenu extends StatefulWidget {

@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -107,7 +109,8 @@ class ChatMessageWidget extends StatelessWidget {
           message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         Text(
-          DateFormat('MMMM d, yyyy HH:mm').format(DateTime.parse(message.dateTime)),
+          DateFormat('MMMM d, yyyy HH:mm')
+              .format(DateTime.parse(message.dateTime)),
           style: const TextStyle(fontSize: 12.0, color: Colors.grey),
         ),
         Container(

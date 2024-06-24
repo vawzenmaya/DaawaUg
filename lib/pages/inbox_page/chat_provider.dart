@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ChatProvider extends ChangeNotifier {
-  Map<String, List<ChatMessage>> _messages = {};
+  final Map<String, List<ChatMessage>> _messages = {};
 
   List<ChatMessage> getMessages(String userName) {
     return _messages[userName] ?? [];
