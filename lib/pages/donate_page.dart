@@ -1,31 +1,40 @@
 import 'package:flutter/material.dart';
-import 'payment_option.dart';
-import 'package:toktok/widgets/input_text_widget.dart';
+import 'package:flutter/services.dart'; // Needed for Clipboard
 
 class DonatePage extends StatefulWidget {
-  const DonatePage({super.key});
+  const DonatePage({Key? key}) : super(key: key);
 
   @override
-  // ignore: library_private_types_in_public_api
-  _DonatePageState createState() => _DonatePageState();
+  State<DonatePage> createState() => _DonatePageState();
 }
 
 class _DonatePageState extends State<DonatePage> {
-  TextEditingController donationTextEditingController = TextEditingController();
-  bool isGiveOnceActive = true;
-  int selectedAmount = 5000;
-  final List<int> giveOnceAmounts = [100000, 50000, 25000, 10000, 5000, 2000];
-  final List<int> giveMonthlyAmounts = [
-    200000,
-    100000,
-    50000,
-    30000,
-    20000,
-    10000
-  ];
+  bool _isSuluhuExpanded = false;
+  bool _isMansorExpanded = false;
 
-  List<int> get donationAmounts =>
-      isGiveOnceActive ? giveOnceAmounts : giveMonthlyAmounts;
+  // Constants for Airtel and MTN labels
+  static const String airtelLabel = "Airtel:";
+  static const String mtnLabel = "MTN:";
+  static const String bankLabel = "Bank Acc:";
+
+  // Phone numbers
+  static const String airtelNumberSuluhu = "0755788381";
+  static const String mtnNumberSuluhu = "0762540123";
+  static const String bankSuluhu = "2535468903";
+  static const String airtelNumberMansor = "0755788381";
+  static const String mtnNumberMansor = "0787018472";
+  static const String bankMansor = "1028377589";
+
+  // Function to copy a given text to clipboard
+  void _copyToClipboard(String text) {
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Copied to clipboard: $text'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +42,7 @@ class _DonatePageState extends State<DonatePage> {
       appBar: AppBar(
         title: const Center(
           child: Text(
-            'Donate Now',
+            "Donate Now",
             style: TextStyle(
               fontSize: 30,
               color: Colors.white,
@@ -43,159 +52,173 @@ class _DonatePageState extends State<DonatePage> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Give Once
-              Container(
-                margin: const EdgeInsets.only(bottom: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isGiveOnceActive = true;
-                      selectedAmount = giveOnceAmounts[4]; // Default to 5000
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isGiveOnceActive ? Colors.orange : Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 18.0),
-                  ),
-                  child: Text(
-                    'GIVE ONCE',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: isGiveOnceActive ? Colors.white : Colors.orange,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Give Monthly
-              Container(
-                margin: const EdgeInsets.only(bottom: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      isGiveOnceActive = false;
-                      selectedAmount = giveMonthlyAmounts[4]; // Default to 20000
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isGiveOnceActive ? Colors.white : Colors.green,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 18.0),
-                  ),
-                  child: Text(
-                    'GIVE MONTHLY',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w800,
-                      color: isGiveOnceActive ? Colors.green : Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-
-              // Donation Amount Buttons
-              GridView.count(
-                crossAxisCount: 3,
-                shrinkWrap: true,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8.0,
-                children: donationAmounts.map((amount) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        selectedAmount = amount;
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: selectedAmount == amount
-                          ? (isGiveOnceActive ? Colors.orange : Colors.green)
-                          : Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 24.0),
-                      textStyle: const TextStyle(fontSize: 16.0),
-                    ),
-                    child: Text(
-                      '$amount\n UGX',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w400,
-                        color: selectedAmount == amount
-                            ? Colors.white
-                            : (isGiveOnceActive ? Colors.orange : Colors.green),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(
-                height: 10,
-              ),
-
-              Container(
-                width: MediaQuery.of(context).size.width,
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                child: InputTextWidget(
-                  textEditingController: donationTextEditingController,
-                  lableString: "Enter Amount",
-                  iconData: Icons.money_outlined,
-                  isObscure: false,
-                ),
-              ),
-
-              // Description
-              Text(
-                'Thank you for your Donation',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14.0, color: Colors.grey[700]),
-              ),
-
-              // Donate Button
-              Container(
-                margin: const EdgeInsets.only(top: 32.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const PaymentOption(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        isGiveOnceActive ? Colors.orange : Colors.green,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    textStyle: const TextStyle(fontSize: 20.0),
-                  ),
-                  child: Text(
-                    'DONATE UGX$selectedAmount ${isGiveOnceActive ? 'TODAY' : 'MONTHLY'}',
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w900),
-                  ),
-                ),
-              ),
-
-              // Security Notice
-              Container(
-                margin: const EdgeInsets.only(top: 16.0),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Icon(Icons.lock, size: 16.0),
-                    SizedBox(width: 4.0),
-                    Text('100% Safe & Secure',
-                        style: TextStyle(fontSize: 12.0)),
+                    const CircleAvatar(
+                      backgroundImage: AssetImage("assets/suluhu.jpg"),
+                      radius: 25,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Suluhu Daawa",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: Icon(_isSuluhuExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right),
+                      onPressed: () {
+                        setState(() {
+                          _isSuluhuExpanded = !_isSuluhuExpanded;
+                        });
+                      },
+                    ),
                   ],
                 ),
-              ),
-            ],
+                if (_isSuluhuExpanded)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "$airtelLabel $airtelNumberSuluhu",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(airtelNumberSuluhu);
+                              },
+                              child: const Text('Copy Airtel'),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "$mtnLabel $mtnNumberSuluhu",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(mtnNumberSuluhu);
+                              },
+                              child: const Text('Copy MTN'),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "$bankLabel $bankSuluhu",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(bankSuluhu);
+                              },
+                              child: const Text('Copy Bank Acc'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const CircleAvatar(
+                      backgroundImage: AssetImage("assets/kasule.jpg"),
+                      radius: 25,
+                    ),
+                    const SizedBox(width: 10),
+                    const Text(
+                      "Mansor",
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: Icon(_isMansorExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right),
+                      onPressed: () {
+                        setState(() {
+                          _isMansorExpanded = !_isMansorExpanded;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                if (_isMansorExpanded)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Text(
+                              "$airtelLabel $airtelNumberMansor",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(airtelNumberMansor);
+                              },
+                              child: const Text('Copy Airtel'),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "$mtnLabel $mtnNumberMansor",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(mtnNumberMansor);
+                              },
+                              child: const Text('Copy MTN'),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Text(
+                              "$bankLabel $bankMansor",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton(
+                              onPressed: () {
+                                _copyToClipboard(bankMansor);
+                              },
+                              child: const Text('Copy MTN'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

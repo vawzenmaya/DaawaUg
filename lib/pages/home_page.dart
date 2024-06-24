@@ -370,10 +370,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             widget.video.likeCount = widget.video.likeCount + 1;
                           });
                         },
-                        child: const Icon(
-                          Icons.favorite,
-                          size: 30,
-                          color: Colors.grey,
+                        child: Image.asset(
+                          "assets/icon/heart.svg",
+                          height: 30,
+                          width: 30,
                         ),
                       )
                     else if (_isLiked == true)
@@ -385,11 +385,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                             widget.video.likeCount = widget.video.likeCount - 1;
                           });
                         },
-                        child: const Icon(
-                          Icons.favorite,
-                          size: 30,
+                        child: Image.asset(
+                          "assets/icon/heart.svg",
+                          width: 30,
+                          height: 30,
                           color: Colors.red,
-                        ),
+                          ),
                       ),
                     if (widget.video.likeCount > 0)
                       Text(
@@ -707,7 +708,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                           ),
                         );
                       },
-                      child: const Icon(Icons.message, size: 30),
+                      child: Image.asset("assets/icon/comment.svg", height: 30, width: 30,),
                     ),
                     if (widget.video.commentCount > 0)
                       Text(
@@ -769,17 +770,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {},
-                      child: const Icon(Icons.share, size: 30),
+                      child: Image.asset("assets/icon/download.svg", height: 30, width: 30,),
                     ),
                     const Text(
-                      "Share",
+                      "9",
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
                     ),
                     const SizedBox(height: 12),
                     InkWell(
                       onTap: () {},
-                      child: const Icon(Icons.question_answer, size: 30),
+                      child: Image.asset("assets/icon/question.svg", height: 30, width: 30,),
                     ),
                     const Text(
                       "53K",
