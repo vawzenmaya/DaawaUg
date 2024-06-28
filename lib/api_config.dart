@@ -44,4 +44,8 @@ class ApiConfig {
   static const String uploadVideoUrl = '$baseUrl/daawatokug/post_video.php';
   static const String fetchUserUploadedVideosUrl =
       '$baseUrl/daawatokug/user_videos.php';
+  static const String fetchUsersForApprovelUrl =
+      '$baseUrl/daawatokug/channels/fetch_users.php';
+  static const String approveUserUrl =
+      '$baseUrl/daawatokug/channels/approve_user.php';
 }

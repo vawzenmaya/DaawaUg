@@ -23,6 +23,7 @@ class Video {
   final String userName;
   final String fullNames;
   final String profilePicUrl;
+  final String role;
   int likeCount;
   int favoriteCount;
   int commentCount;
@@ -38,6 +39,7 @@ class Video {
     required this.userName,
     required this.fullNames,
     required this.profilePicUrl,
+    required this.role,
     required this.likeCount,
     required this.favoriteCount,
     required this.commentCount,
@@ -55,6 +57,7 @@ class Video {
       userName: json['username'],
       fullNames: json['fullNames'],
       profilePicUrl: json['profilePic'],
+      role: json['role'],
       likeCount: json['likeCount'] != null ? int.parse(json['likeCount']) : 0,
       favoriteCount:
           json['favoriteCount'] != null ? int.parse(json['favoriteCount']) : 0,
@@ -73,6 +76,7 @@ class Comment {
   final String username;
   final String fullNames;
   final String profilePic;
+  final String role;
 
   Comment({
     required this.commentId,
@@ -83,6 +87,7 @@ class Comment {
     required this.username,
     required this.fullNames,
     required this.profilePic,
+    required this.role,
   });
 
   factory Comment.fromJson(Map<String, dynamic> json) {
@@ -95,6 +100,7 @@ class Comment {
       username: json['username'],
       fullNames: json['fullNames'],
       profilePic: json['profilePic'],
+      role: json['role'],
     );
   }
 }
@@ -438,8 +444,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                           return Center(
                                               child: Lottie.asset(
                                             'assets/loading.json',
-                                            width: 100,
-                                            height: 100,
+                                            width: 50,
+                                            height: 50,
                                             fit: BoxFit.cover,
                                           ));
                                         } else if (snapshot.hasError) {
@@ -545,20 +551,46 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                                         .ellipsis,
                                                               )
                                                             else
-                                                              Text(
-                                                                comment
-                                                                    .fullNames,
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    fontSize:
-                                                                        16),
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                              Row(
+                                                                children: [
+                                                                  Text(
+                                                                    comment
+                                                                        .fullNames,
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w500,
+                                                                        fontSize:
+                                                                            16),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 2),
+                                                                  if (comment
+                                                                          .role ==
+                                                                      "admin")
+                                                                    const Icon(
+                                                                        Icons
+                                                                            .verified,
+                                                                        color: Colors
+                                                                            .yellow,
+                                                                        size:
+                                                                            14)
+                                                                  else if (comment
+                                                                          .role ==
+                                                                      "channel")
+                                                                    const Icon(
+                                                                        Icons
+                                                                            .verified,
+                                                                        color: Colors
+                                                                            .blue,
+                                                                        size:
+                                                                            14)
+                                                                ],
                                                               ),
                                                           ],
                                                         ),
@@ -630,64 +662,61 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                     key: _formKey,
                                     child: Column(
                                       children: [
-                                        Stack(
-                                          alignment: Alignment.centerRight,
+                                        Row(
                                           children: [
-                                            TextFormField(
-                                              controller: _commentController,
-                                              keyboardType:
-                                                  TextInputType.multiline,
-                                              maxLines: null,
-                                              maxLength: 500,
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w300),
-                                              decoration: const InputDecoration(
-                                                labelText: 'Comment',
-                                                labelStyle: TextStyle(
-                                                    color: Colors.grey),
-                                                border: UnderlineInputBorder(
-                                                  borderSide: BorderSide(
+                                            Expanded(
+                                              child: TextFormField(
+                                                controller: _commentController,
+                                                keyboardType:
+                                                    TextInputType.multiline,
+                                                maxLines: null,
+                                                maxLength: 250,
+                                                style: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                                decoration:
+                                                    const InputDecoration(
+                                                  labelText: 'Comment',
+                                                  labelStyle: TextStyle(
                                                       color: Colors.grey),
-                                                ),
-                                                focusedBorder:
-                                                    UnderlineInputBorder(
-                                                  borderSide: BorderSide(
-                                                      color: Colors.greenAccent,
-                                                      width: 1),
-                                                ),
-                                              ),
-                                              validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return 'Please type your comment';
-                                                }
-                                                return null;
-                                              },
-                                            ),
-                                            Positioned(
-                                              right: 0,
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 10.0, bottom: 10.0),
-                                                child: GestureDetector(
-                                                  onTap: () {
-                                                    sendComment(
-                                                        widget.video.videoId);
-                                                  },
-                                                  child: const Padding(
-                                                    padding:
-                                                        EdgeInsets.all(8.0),
-                                                    child: Icon(
-                                                      Icons.send,
-                                                      color: Colors.greenAccent,
-                                                      size: 25,
-                                                    ),
+                                                  border: UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color: Colors.grey),
                                                   ),
+                                                  focusedBorder:
+                                                      UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                            Colors.greenAccent,
+                                                        width: 1),
+                                                  ),
+                                                ),
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return 'Please type your comment';
+                                                  }
+                                                  return null;
+                                                },
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                sendComment(
+                                                    widget.video.videoId);
+                                              },
+                                              child: const Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 8.0),
+                                                child: Icon(
+                                                  Icons.send,
+                                                  color: Colors.greenAccent,
+                                                  size: 25,
                                                 ),
                                               ),
                                             ),
                                           ],
-                                        )
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -803,11 +832,22 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     Row(
                       children: [
                         if (widget.video.fullNames != "")
-                          Text(
-                            widget.video.fullNames,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
+                          Row(
+                            children: [
+                              Text(
+                                widget.video.fullNames,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(width: 2),
+                              if (widget.video.role == "admin")
+                                const Icon(Icons.verified,
+                                    color: Colors.yellow, size: 15)
+                              else if (widget.video.role == "channel")
+                                const Icon(Icons.verified,
+                                    color: Colors.blue, size: 15)
+                            ],
                           )
                         else
                           Text(
@@ -888,8 +928,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         child: SizedBox(
           child: Lottie.asset(
             'assets/loading.json',
-            width: 100,
-            height: 100,
+            width: 60,
+            height: 60,
             fit: BoxFit.cover,
           ),
         ),

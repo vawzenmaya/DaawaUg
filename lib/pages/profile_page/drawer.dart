@@ -22,7 +22,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
   String _phoneNumber = '';
   String _biography = '';
   String _profilePic = ApiConfig.emptyProfilePicUrl;
-  //String _role = '';
+  String _role = '';
 
   Future<void> fetchUserData() async {
     try {
@@ -43,7 +43,7 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
           _phoneNumber = responseData['phoneNumber'] ?? '';
           _biography = responseData['biography'] ?? '';
           _profilePic = responseData['profilePic'] ?? '';
-          //_role = responseData['role'] ?? '';
+          _role = responseData['role'] ?? '';
         });
       } else {
         //print('Failed to fetch user details');
@@ -176,22 +176,42 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text(
-                                    "Profile Name",
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                                  if (_role == "user")
+                                    const Text(
+                                      "Profile Name",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  else
+                                    const Text(
+                                      "Channel Name",
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   const SizedBox(height: 5),
                                   Row(
                                     children: [
                                       if (_fullNames != "")
-                                        Text(
-                                          _fullNames,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.w400),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              _fullNames,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                            const SizedBox(width: 2),
+                                            if (_role == "admin")
+                                              const Icon(Icons.verified,
+                                                  color: Colors.yellow,
+                                                  size: 15)
+                                            else if (_role == "channel")
+                                              const Icon(Icons.verified,
+                                                  color: Colors.blue, size: 15)
+                                          ],
                                         )
                                       else
                                         Row(

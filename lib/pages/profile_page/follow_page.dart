@@ -88,9 +88,10 @@ class _FollowPageState extends State<FollowPage> {
                         Text(
                           'Following',
                           style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15),
+                            color: Colors.grey,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                          ),
                         )
                       ],
                     ),

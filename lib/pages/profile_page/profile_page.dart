@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String _fullNames = '';
   String _biography = '';
   String _profilePic = ApiConfig.emptyProfilePicUrl;
+  String _role = '';
 
   Future<void> fetchUserData() async {
     try {
@@ -41,6 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _fullNames = responseData['fullNames'] ?? '';
           _biography = responseData['biography'] ?? '';
           _profilePic = responseData['profilePic'] ?? '';
+          _role = responseData['role'] ?? '';
         });
       } else {
         //print('Failed to fetch user details');
@@ -73,11 +75,21 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               if (_fullNames != "")
                 Flexible(
-                  child: Text(
-                    _fullNames,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
+                  child: Row(
+                    children: [
+                      Text(
+                        _fullNames,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(width: 2),
+                      if (_role == "admin")
+                        const Icon(Icons.verified,
+                            color: Colors.yellow, size: 20)
+                      else if (_role == "channel")
+                        const Icon(Icons.verified, color: Colors.blue, size: 20)
+                    ],
                   ),
                 )
               else

@@ -68,8 +68,8 @@ class _VideosTabState extends State<VideosTab> {
         ? Center(
             child: Lottie.asset(
             'assets/loading.json',
-            width: 100,
-            height: 100,
+            width: 50,
+            height: 50,
             fit: BoxFit.cover,
           ))
         : GridView.builder(
@@ -104,8 +104,8 @@ class _VideosTabState extends State<VideosTab> {
                         return Center(
                             child: Lottie.asset(
                           'assets/loading.json',
-                          width: 100,
-                          height: 100,
+                          width: 40,
+                          height: 40,
                           fit: BoxFit.cover,
                         ));
                       } else {

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:toktok/api_config.dart';
 import 'package:toktok/pages/video_page/add_video_page.dart';
 import 'package:toktok/pages/donate_page/donate_page.dart';
 import 'package:toktok/pages/home_page.dart';
 import 'package:toktok/pages/inbox_page/inbox_page.dart';
 import 'package:toktok/pages/profile_page/profile_page.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get/get.dart';
+import 'dart:convert';
 
 class BottomMainMenu extends StatefulWidget {
   const BottomMainMenu({super.key});
@@ -27,6 +32,43 @@ class _BottomMainMenuState extends State<BottomMainMenu> {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  String _role = '';
+
+  Future<void> fetchUserData() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String userid = prefs.getString('userID') ?? '';
+
+      final response = await http.get(
+        Uri.parse(ApiConfig.getUserDataUrl(userid)),
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+
+        setState(() {
+          _role = responseData['role'] ?? '';
+        });
+      } else {
+        //print('Failed to fetch user details');
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Network Error',
+        'Check your internet connection',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
   }
 
   @override
@@ -53,23 +95,42 @@ class _BottomMainMenuState extends State<BottomMainMenu> {
             ),
             label: 'Donate',
           ),
-          BottomNavigationBarItem(
-            icon: Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.greenAccent, Colors.lightGreenAccent],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+          if (_role == "admin" || _role == "channel")
+            BottomNavigationBarItem(
+              icon: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.greenAccent, Colors.lightGreenAccent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
                 ),
-                shape: BoxShape.circle,
+                child: const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(Icons.add),
+                ),
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Icon(Icons.add),
+              label: '',
+            )
+          else
+            BottomNavigationBarItem(
+              icon: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.greenAccent, Colors.lightGreenAccent],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(Icons.tv),
+                ),
               ),
+              label: 'Channels',
             ),
-            label: '',
-          ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.email),
             label: 'Inbox',

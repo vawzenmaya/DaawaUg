@@ -188,7 +188,7 @@ class _SignInPageState extends State<SignInPage> {
               const Row(
                 children: [
                   Text(
-                    'Sign In',
+                    'Login',
                     style: TextStyle(
                         color: Colors.greenAccent, fontWeight: FontWeight.bold),
                   ),
@@ -343,7 +343,7 @@ class _SignInPageState extends State<SignInPage> {
               ),
               const SizedBox(height: 50),
               const Text(
-                'Or sign in with',
+                'Or Login with',
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 15),
@@ -355,7 +355,7 @@ class _SignInPageState extends State<SignInPage> {
                       // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Google services are temporarily unavailable',
-                        'Sorry for the sign in inconveniences caused.',
+                        'Sorry for the login inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -370,7 +370,7 @@ class _SignInPageState extends State<SignInPage> {
                       // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Facebook services are temporarily unavailable',
-                        'Sorry for the sign in inconveniences caused.',
+                        'Sorry for the login inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
@@ -385,7 +385,7 @@ class _SignInPageState extends State<SignInPage> {
                       // Get.offAll(() => const BottomMainMenu());
                       Get.snackbar(
                         'Twitter / X services are temporarily unavailable',
-                        'Sorry for the sign in inconveniences caused.',
+                        'Sorry for the login inconveniences caused.',
                         backgroundColor: Colors.red,
                         colorText: Colors.white,
                         snackPosition: SnackPosition.TOP,
