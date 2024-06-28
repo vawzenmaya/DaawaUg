@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // Needed for Clipboard
 
 class DonatePage extends StatefulWidget {
+  // ignore: use_super_parameters
   const DonatePage({Key? key}) : super(key: key);
 
   @override
@@ -74,7 +75,9 @@ class _DonatePageState extends State<DonatePage> {
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: Icon(_isSuluhuExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right),
+                      icon: Icon(_isSuluhuExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_right),
                       onPressed: () {
                         setState(() {
                           _isSuluhuExpanded = !_isSuluhuExpanded;
@@ -154,7 +157,9 @@ class _DonatePageState extends State<DonatePage> {
                     ),
                     const Spacer(),
                     IconButton(
-                      icon: Icon(_isMansorExpanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_right),
+                      icon: Icon(_isMansorExpanded
+                          ? Icons.keyboard_arrow_down
+                          : Icons.keyboard_arrow_right),
                       onPressed: () {
                         setState(() {
                           _isMansorExpanded = !_isMansorExpanded;
