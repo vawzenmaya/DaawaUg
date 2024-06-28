@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:toktok/pages/inbox_page/chat_provider.dart';
 import 'chat_page.dart';
-import 'chat_provider.dart';
 
 class InboxPage extends StatelessWidget {
   const InboxPage({super.key});
