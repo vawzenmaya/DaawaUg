@@ -44,8 +44,30 @@ class ApiConfig {
   static const String uploadVideoUrl = '$baseUrl/daawatokug/post_video.php';
   static const String fetchUserUploadedVideosUrl =
       '$baseUrl/daawatokug/user_videos.php';
+  static const String fetchChannelsUrl =
+      '$baseUrl/daawatokug/channels/fetch_channels.php';
   static const String fetchUsersForApprovelUrl =
       '$baseUrl/daawatokug/channels/fetch_users.php';
   static const String approveUserUrl =
       '$baseUrl/daawatokug/channels/approve_user.php';
+  static const String fetchApprovedChannelsUrl =
+      '$baseUrl/daawatokug/channels/fetch_approved_channels.php';
+  static const String unapproveUserUrl =
+      '$baseUrl/daawatokug/channels/unapprove_channel.php';
+  static const String approveAdminUrl =
+      '$baseUrl/daawatokug/channels/approve_admin.php';
+  static const String fetchApprovedAdminsUrl =
+      '$baseUrl/daawatokug/channels/fetch_approved_admins.php';
+  static const String fetchfollowedUrl =
+      '$baseUrl/daawatokug/channels/fetch_followed.php';
+  static const String fetchUnfollowedUrl =
+      '$baseUrl/daawatokug/channels/fetch_unfollowed.php';
+  static const String followChannelUrl =
+      '$baseUrl/daawatokug/channels/follow_channel.php';
+  static const String unfollowChannelUrl =
+      '$baseUrl/daawatokug/channels/unfollow_channel.php';
+  static const String fetchFollowingUrl =
+      '$baseUrl/daawatokug/channels/fetch_following_count.php';
+  static const String fetchFollowerUrl =
+      '$baseUrl/daawatokug/channels/fetch_follower_count.php';
 }

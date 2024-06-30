@@ -93,7 +93,7 @@ class _UploadScreenState extends State<UploadScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Video uploaded successfully")),
         );
-        Get.to(const BottomMainMenu());
+        Get.offAll(() => const BottomMainMenu());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -143,28 +143,36 @@ class _UploadScreenState extends State<UploadScreen> {
                   )
                 : Column(
                     children: [
-                      // Audio Name input
+                      // Video Title input
                       Container(
                         width: MediaQuery.of(context).size.width,
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: TextField(
                           controller: audioNameTextEditingController,
                           decoration: const InputDecoration(
-                            labelText: "Audio Name",
-                            icon: Icon(Icons.music_note_sharp),
+                            labelText: "Title",
+                            labelStyle: TextStyle(color: Colors.white),
+                            icon: Icon(
+                              Icons.music_note_sharp,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(height: 10),
-                      // Caption input
+                      // Description input
                       Container(
                         width: MediaQuery.of(context).size.width,
                         margin: const EdgeInsets.symmetric(horizontal: 20),
                         child: TextField(
                           controller: captionTextEditingController,
                           decoration: const InputDecoration(
-                            labelText: "Caption",
-                            icon: Icon(Icons.slideshow_sharp),
+                            labelText: "Description",
+                            labelStyle: TextStyle(color: Colors.white),
+                            icon: Icon(
+                              Icons.slideshow_sharp,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

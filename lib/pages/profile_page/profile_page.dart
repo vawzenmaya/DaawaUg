@@ -6,11 +6,13 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/signin.dart';
+import 'package:toktok/pages/profile_page/channels_page.dart';
 import 'package:toktok/pages/profile_page/drawer.dart';
 import 'package:toktok/pages/profile_page/edit_profile.dart';
 import 'package:toktok/pages/profile_page/tab_videos.dart';
 import 'package:toktok/pages/profile_page/tab_favorites.dart';
 import 'package:toktok/pages/profile_page/tab_liked.dart';
+import 'package:toktok/pages/profile_page/unfollow_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,6 +26,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String _biography = '';
   String _profilePic = ApiConfig.emptyProfilePicUrl;
   String _role = '';
+  int followingCount = 0;
+  int followerCount = 0;
 
   Future<void> fetchUserData() async {
     try {
@@ -58,10 +62,56 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchFollowingCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    if (userId == null) {
+      throw Exception('No user ID found in SharedPreferences');
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConfig.fetchFollowingUrl),
+      body: {'userid': userId},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        followingCount = json.decode(response.body)['followingCount'];
+      });
+    } else {
+      throw Exception('Failed to load following count');
+    }
+  }
+
+  Future<void> fetchFollowerCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    if (userId == null) {
+      throw Exception('No user ID found in SharedPreferences');
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConfig.fetchFollowerUrl),
+      body: {'userid': userId},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        followerCount = json.decode(response.body)['followerCount'];
+      });
+    } else {
+      throw Exception('Failed to load follower count');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    fetchFollowingCount();
+    fetchFollowerCount();
   }
 
   @override
@@ -86,10 +136,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       const SizedBox(width: 2),
                       if (_role == "admin")
                         const Icon(Icons.verified,
-                            color: Colors.yellow, size: 20)
+                            color: Colors.yellow, size: 18)
                       else if (_role == "channel")
-                        const Icon(Icons.verified, color: Colors.blue, size: 20)
+                        const Icon(Icons.verified, color: Colors.blue, size: 18)
                     ],
+                  ),
+                )
+              else if (_fullNames == "" && _role != "user")
+                const Flexible(
+                  child: Text(
+                    "No channel name!",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
                   ),
                 )
               else
@@ -241,87 +300,94 @@ class _ProfilePageState extends State<ProfilePage> {
                     fontSize: 20,
                     fontWeight: FontWeight.normal),
               ),
-            const SizedBox(height: 5),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerRight,
-                    child: const Column(
-                      children: [
-                        Text(
-                          '3',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
+            if (_role == "admin" || _role == "channel")
+              const SizedBox(height: 5),
+            if (_role == "admin" || _role == "channel")
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: GestureDetector(
+                        onTap: () {
+                          Get.to(const UnfollowChannelsPage());
+                        },
+                        child: Column(
+                          children: [
+                            Text(
+                              '$followingCount',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const Text(
+                              "Following",
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
                         ),
-                        Text(
-                          "Following",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const Column(
-                      children: [
-                        Text(
-                          '70',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: [
+                          Text(
+                            '$followerCount',
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        Text(
-                          'Followers',
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
+                          const Text(
+                            'Followers',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: Container(
-                    alignment: Alignment.centerLeft,
-                    child: const Column(
-                      children: [
-                        Text(
-                          '370',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: const Column(
+                        children: [
+                          Text(
+                            '37K',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
                           ),
-                        ),
-                        Text(
-                          "Likes",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 15,
-                          ),
-                        )
-                      ],
+                          Text(
+                            "Likes",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15,
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                )
-              ],
-            ),
+                  )
+                ],
+              ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -332,8 +398,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   },
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.grey,
-                        border: Border.all(color: Colors.grey),
+                        color: Colors.greenAccent,
+                        border: Border.all(color: Colors.greenAccent),
                         borderRadius: BorderRadius.circular(5)),
                     child: const Padding(
                       padding: EdgeInsets.all(10.0),
@@ -345,29 +411,67 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey,
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(5)),
-                    child: const Padding(
-                      padding: EdgeInsets.all(10.0),
-                      child: Text("Share profile",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                if (_role == "admin" || _role == "channel")
+                  GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.greenAccent,
+                          border: Border.all(color: Colors.greenAccent),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: const Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text("Payment Details",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                  )
+                else
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(const UnfollowChannelsPage());
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: Colors.greenAccent,
+                          border: Border.all(color: Colors.greenAccent),
+                          borderRadius: BorderRadius.circular(5)),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: Column(
+                          children: [
+                            Text(
+                              '$followingCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const Text(
+                              "Following",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
                   ),
-                ),
                 const SizedBox(width: 10),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    Get.to(const FollowChannelsPage());
+                  },
                   child: Container(
                     decoration: BoxDecoration(
-                        color: Colors.greenAccent,
-                        border: Border.all(color: Colors.greenAccent),
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.blue),
                         borderRadius: BorderRadius.circular(5)),
                     child: const Padding(
                         padding: EdgeInsets.all(10.0),

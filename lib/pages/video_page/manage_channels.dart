@@ -5,18 +5,19 @@ import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:toktok/api_config.dart';
 
-class ApproveChannels extends StatefulWidget {
-  const ApproveChannels({super.key});
+class ManageApprovedChannels extends StatefulWidget {
+  const ManageApprovedChannels({super.key});
 
   @override
-  State<ApproveChannels> createState() => _ApproveChannelsState();
+  State<ManageApprovedChannels> createState() => _ManageApprovedChannelsState();
 }
 
-class _ApproveChannelsState extends State<ApproveChannels> {
+class _ManageApprovedChannelsState extends State<ManageApprovedChannels> {
   List<dynamic> users = [];
   List<dynamic> filteredUsers = [];
   TextEditingController searchController = TextEditingController();
-  Set<String> approvedUsernames = {};
+  Set<String> unapprovedUsernames = {};
+  Set<String> adminUsernames = {};
 
   @override
   void initState() {
@@ -34,7 +35,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
 
   Future<void> fetchUsers() async {
     final response =
-        await http.get(Uri.parse(ApiConfig.fetchUsersForApprovelUrl));
+        await http.get(Uri.parse(ApiConfig.fetchApprovedChannelsUrl));
 
     if (response.statusCode == 200) {
       setState(() {
@@ -42,7 +43,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
         filteredUsers = users;
       });
     } else {
-      throw Exception('Failed to load users');
+      throw Exception('Failed to load channels');
     }
   }
 
@@ -58,24 +59,48 @@ class _ApproveChannelsState extends State<ApproveChannels> {
 
   Future<void> _approveUser(String username) async {
     final response = await http.post(
-      Uri.parse(ApiConfig.approveUserUrl),
+      Uri.parse(ApiConfig.unapproveUserUrl),
       body: {
         'username': username,
-        'role': 'channel',
+        'role': 'user',
       },
     );
 
     if (response.statusCode == 200) {
       setState(() {
-        approvedUsernames.add(username);
+        unapprovedUsernames.add(username);
+        adminUsernames.remove(username);
       });
     } else {
       throw Exception('Failed to update user role');
     }
   }
 
-  bool isUserApproved(String username) {
-    return approvedUsernames.contains(username);
+  Future<void> _approveAdmin(String username) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.approveAdminUrl),
+      body: {
+        'username': username,
+        'role': 'admin',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        adminUsernames.add(username);
+        unapprovedUsernames.remove(username);
+      });
+    } else {
+      throw Exception('Failed to update user role');
+    }
+  }
+
+  bool isUserAdmin(String username) {
+    return adminUsernames.contains(username);
+  }
+
+  bool isUserUnapproved(String username) {
+    return unapprovedUsernames.contains(username);
   }
 
   @override
@@ -91,7 +116,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
               color: Colors.white,
             )),
         title: const Text(
-          "Approve New Channels",
+          "Manage Channels",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
@@ -131,7 +156,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
                           fit: BoxFit.cover,
                         ),
                         const Text(
-                          "No users found",
+                          "No channels found",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
@@ -144,7 +169,8 @@ class _ApproveChannelsState extends State<ApproveChannels> {
                     itemCount: filteredUsers.length,
                     itemBuilder: (context, index) {
                       final username = filteredUsers[index]['username'];
-                      final isApproved = isUserApproved(username);
+                      final isAdmin = isUserAdmin(username);
+                      final isUnapproved = isUserUnapproved(username);
 
                       return Card(
                         child: Padding(
@@ -192,17 +218,24 @@ class _ApproveChannelsState extends State<ApproveChannels> {
                                       if (filteredUsers[index]['fullNames'] ==
                                           "")
                                         const Text(
-                                          "No Profile Name",
+                                          "No Channel Name",
                                           style: TextStyle(
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold),
                                         )
                                       else
-                                        Text(
-                                          filteredUsers[index]['fullNames'],
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              filteredUsers[index]['fullNames'],
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(width: 3),
+                                            const Icon(Icons.verified,
+                                                color: Colors.blue, size: 14)
+                                          ],
                                         ),
                                       Text(
                                         "@$username",
@@ -211,44 +244,74 @@ class _ApproveChannelsState extends State<ApproveChannels> {
                                       ),
                                     ],
                                   ),
-                                  const Spacer(),
-                                  Column(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () async {
-                                          await _approveUser(username);
-                                        },
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              isApproved
-                                                  ? Icons.verified_user
-                                                  : Icons.approval_rounded,
-                                              size: 18,
-                                              color: isApproved
-                                                  ? Colors.greenAccent
-                                                  : Colors.blue,
-                                            ),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            Text(
-                                              isApproved
-                                                  ? "Approved"
-                                                  : "Approve",
-                                              style: TextStyle(
-                                                color: isApproved
-                                                    ? Colors.greenAccent
-                                                    : Colors.blue,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  )
                                 ],
                               ),
+                              const SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await _approveAdmin(username);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          isAdmin
+                                              ? Icons.verified_user
+                                              : Icons.approval,
+                                          size: 18,
+                                          color: isAdmin
+                                              ? Colors.greenAccent
+                                              : Colors.yellow,
+                                        ),
+                                        const SizedBox(
+                                          width: 3,
+                                        ),
+                                        Text(
+                                          isAdmin ? "Made Admin" : "Make Admin",
+                                          style: TextStyle(
+                                            color: isAdmin
+                                                ? Colors.greenAccent
+                                                : Colors.yellow,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  GestureDetector(
+                                    onTap: () async {
+                                      await _approveUser(username);
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          isUnapproved
+                                              ? Icons.cancel
+                                              : Icons.verified_user,
+                                          size: 18,
+                                          color: isUnapproved
+                                              ? Colors.red
+                                              : Colors.blue,
+                                        ),
+                                        const SizedBox(
+                                          width: 3,
+                                        ),
+                                        Text(
+                                          isUnapproved
+                                              ? "Channel Removed"
+                                              : "Remove Channel",
+                                          style: TextStyle(
+                                            color: isUnapproved
+                                                ? Colors.red
+                                                : Colors.blue,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ),
