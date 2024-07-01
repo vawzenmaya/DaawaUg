@@ -9,6 +9,8 @@ import 'package:toktok/auth/signin.dart';
 import 'package:toktok/pages/profile_page/channels_page.dart';
 import 'package:toktok/pages/profile_page/drawer.dart';
 import 'package:toktok/pages/profile_page/edit_profile.dart';
+import 'package:toktok/pages/profile_page/followers_page.dart';
+import 'package:toktok/pages/profile_page/payment_details.dart';
 import 'package:toktok/pages/profile_page/tab_videos.dart';
 import 'package:toktok/pages/profile_page/tab_favorites.dart';
 import 'package:toktok/pages/profile_page/tab_liked.dart';
@@ -28,6 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String _role = '';
   int followingCount = 0;
   int followerCount = 0;
+  int likesCount = 0;
 
   Future<void> fetchUserData() async {
     try {
@@ -106,12 +109,35 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  Future<void> fetchAccountLikesCount() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
+
+    if (userId == null) {
+      throw Exception('No user ID found in SharedPreferences');
+    }
+
+    final response = await http.post(
+      Uri.parse(ApiConfig.fetchAccountLikesUrl),
+      body: {'userid': userId},
+    );
+
+    if (response.statusCode == 200) {
+      setState(() {
+        likesCount = json.decode(response.body)['likesCount'];
+      });
+    } else {
+      throw Exception('Failed to load likes count');
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     fetchUserData();
     fetchFollowingCount();
     fetchFollowerCount();
+    fetchAccountLikesCount();
   }
 
   @override
@@ -307,12 +333,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Container(
-                      alignment: Alignment.centerRight,
-                      child: GestureDetector(
-                        onTap: () {
-                          Get.to(const UnfollowChannelsPage());
-                        },
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(const UnfollowChannelsPage());
+                      },
+                      child: Container(
+                        alignment: Alignment.centerRight,
                         child: Column(
                           children: [
                             Text(
@@ -337,12 +363,42 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   Expanded(
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.to(const FollowersPage());
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            Text(
+                              '$followerCount',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                            const Text(
+                              'Followers',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.normal,
+                                fontSize: 15,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
                     child: Container(
-                      alignment: Alignment.center,
+                      alignment: Alignment.centerLeft,
                       child: Column(
                         children: [
                           Text(
-                            '$followerCount',
+                            '$likesCount',
                             style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
@@ -350,31 +406,6 @@ class _ProfilePageState extends State<ProfilePage> {
                             ),
                           ),
                           const Text(
-                            'Followers',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 15,
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: const Column(
-                        children: [
-                          Text(
-                            '37K',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                            ),
-                          ),
-                          Text(
                             "Likes",
                             style: TextStyle(
                               color: Colors.grey,
@@ -413,7 +444,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(width: 10),
                 if (_role == "admin" || _role == "channel")
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Get.to(const PaymentDetails());
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.greenAccent,
@@ -439,25 +472,23 @@ class _ProfilePageState extends State<ProfilePage> {
                           border: Border.all(color: Colors.greenAccent),
                           borderRadius: BorderRadius.circular(5)),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: Column(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
                           children: [
+                            const Text(
+                              "Following: ",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             Text(
                               '$followingCount',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 18,
                               ),
                             ),
-                            const Text(
-                              "Following",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            )
                           ],
                         ),
                       ),

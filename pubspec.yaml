@@ -98,6 +98,11 @@ flutter:
     - assets/images/whatsapp.png
     - assets/images/person.png
     - assets/images/avatarx.PNG
+    - assets/images/MTNandAirtel.jpg
+    - assets/images/airtel.webp
+    - assets/images/mtn.jpeg
+    - assets/images/mobile.png
+    - assets/images/bankaccount.png
     - assets/upload.png
     - assets/suluhu.jpg
     - assets/icon/heart.svg

@@ -70,4 +70,14 @@ class ApiConfig {
       '$baseUrl/daawatokug/channels/fetch_following_count.php';
   static const String fetchFollowerUrl =
       '$baseUrl/daawatokug/channels/fetch_follower_count.php';
+  static const String fetchAccountLikesUrl =
+      '$baseUrl/daawatokug/channels/fetch_account_likes_count.php';
+  static const String fetchAccountFollowersUrl =
+      '$baseUrl/daawatokug/channels/fetch_account_followers.php';
+  static String fetchPaymentDetailsUrl =
+      '$baseUrl/daawatokug/channels/fetch_payment_details.php';
+  static String updatePaymentDetailsUrl =
+      '$baseUrl/daawatokug/channels/update_payment_details.php';
+  static String fetchChannelsforDonationUrl =
+      '$baseUrl/daawatokug/channels/fetch_donate_channels.php';
 }
