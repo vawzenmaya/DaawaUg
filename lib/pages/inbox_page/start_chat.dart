@@ -1,27 +1,25 @@
 import 'dart:convert';
-import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
-import 'package:toktok/pages/donate_page/profile_donation.dart';
 import 'package:toktok/pages/inbox_page/chat_page.dart';
 import 'package:toktok/pages/profile_page/follow_page.dart';
 
-class DonatePage extends StatefulWidget {
-  const DonatePage({super.key});
+class StartChat extends StatefulWidget {
+  const StartChat({super.key});
+
   @override
-  State<DonatePage> createState() => _DonatePageState();
+  State<StartChat> createState() => _StartChatState();
 }
 
-class _DonatePageState extends State<DonatePage> {
+class _StartChatState extends State<StartChat> {
   List<dynamic> users = [];
   List<dynamic> filteredUsers = [];
   TextEditingController searchController = TextEditingController();
   Set<String> fetchedUsers = {};
-  int _expandedIndex = -1;
 
   Future<void> fetchUsers() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -32,8 +30,8 @@ class _DonatePageState extends State<DonatePage> {
     }
 
     final response = await http.post(
-      Uri.parse(ApiConfig.fetchChannelsforDonationUrl),
-      body: {'userid': userId, 'role': 'user'},
+      Uri.parse(ApiConfig.fetchAllUsersUrl),
+      body: {'userid': userId},
     );
 
     if (response.statusCode == 200) {
@@ -77,41 +75,23 @@ class _DonatePageState extends State<DonatePage> {
     super.dispose();
   }
 
-  void _toggleExpansion(int index) {
-    setState(() {
-      if (_expandedIndex == index) {
-        _expandedIndex = -1;
-      } else {
-        _expandedIndex = index;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        leading: const Icon(
-          Icons.volunteer_activism,
-          color: Colors.white,
-        ),
-        title: const Text(
-          "Donate to a channel",
-          style: TextStyle(
+        leading: IconButton(
+          onPressed: () {
+            Get.back();
+          },
+          icon: const Icon(
+            Icons.arrow_back,
             color: Colors.white,
-            fontWeight: FontWeight.bold,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.info,
-              color: Colors.white,
-            ),
-          )
-        ],
+        title: const Text(
+          'DaawaTok Users',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -120,7 +100,7 @@ class _DonatePageState extends State<DonatePage> {
             TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                labelText: 'Search for a channel',
+                labelText: 'Search for DaawaTokers',
                 prefixIcon: Icon(
                   Icons.search,
                   color: Colors.white,
@@ -149,7 +129,7 @@ class _DonatePageState extends State<DonatePage> {
                               fit: BoxFit.cover,
                             ),
                             const Text(
-                              "No Channels found",
+                              "No DaawaTokers found",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
@@ -164,7 +144,19 @@ class _DonatePageState extends State<DonatePage> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            _toggleExpansion(index);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatPage(
+                                  userId: filteredUsers[index]['userid'],
+                                  username: filteredUsers[index]['username'],
+                                  fullNames: filteredUsers[index]['fullNames'],
+                                  profilePic: filteredUsers[index]
+                                      ['profilePic'],
+                                  role: filteredUsers[index]['role'],
+                                ),
+                              ),
+                            );
                           },
                           child: Card(
                             child: Padding(
@@ -270,158 +262,37 @@ class _DonatePageState extends State<DonatePage> {
                                         ],
                                       ),
                                       const Spacer(),
-                                      if (_expandedIndex == index)
-                                        const Icon(Icons.expand_less,
-                                            color: Colors.white)
-                                      else
-                                        const Icon(Icons.expand_more,
-                                            color: Colors.white),
-                                    ],
-                                  ),
-                                  if (_expandedIndex == index)
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 10),
-                                        const Divider(),
-                                        const Text(
-                                          "About this channel",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              fontSize: 17),
-                                        ),
-                                        if (filteredUsers[index]['biography']
-                                            .isNotEmpty)
-                                          ExpandableText(
-                                            filteredUsers[index]['biography'],
-                                            style: const TextStyle(
-                                                color: Colors.white),
-                                            expandText: 'More',
-                                            collapseText: 'Less',
-                                            expandOnTextTap: true,
-                                            collapseOnTextTap: true,
-                                            maxLines: 2,
-                                            linkColor: Colors.blueGrey,
-                                          )
-                                        else
-                                          const Text(
-                                            'No About',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        const Divider(),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => FollowPage(
+                                                userId: filteredUsers[index]
+                                                    ['userid'],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        child: const Row(
                                           children: [
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.to(FollowPage(
-                                                    userId: filteredUsers[index]
-                                                        ['userid']));
-                                              },
-                                              child: const Card(
-                                                color: Colors.greenAccent,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.remove_red_eye,
-                                                          size: 18,
-                                                          color: Colors.white),
-                                                      SizedBox(width: 5),
-                                                      Text("Profile",
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.white))
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
+                                            Icon(
+                                              Icons.remove_red_eye,
+                                              color: Colors.greenAccent,
+                                              size: 15,
                                             ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.to(ChatPage(
-                                                    userId: filteredUsers[index]
-                                                        ['userid'],
-                                                    username:
-                                                        filteredUsers[index]
-                                                            ['username'],
-                                                    fullNames:
-                                                        filteredUsers[index]
-                                                            ['fullNames'],
-                                                    profilePic:
-                                                        filteredUsers[index]
-                                                            ['profilePic'],
-                                                    role: filteredUsers[index]
-                                                        ['role']));
-                                              },
-                                              child: const Card(
-                                                color: Colors.blue,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.chat,
-                                                          size: 18,
-                                                          color: Colors.white),
-                                                      SizedBox(width: 5),
-                                                      Text(
-                                                        "Message",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.to(ProfileDonation(
-                                                    userId: filteredUsers[index]
-                                                        ['userid'],
-                                                    username:
-                                                        filteredUsers[index]
-                                                            ['username'],
-                                                    fullNames:
-                                                        filteredUsers[index]
-                                                            ['fullNames'],
-                                                    profilePic:
-                                                        filteredUsers[index]
-                                                            ['profilePic'],
-                                                    role: filteredUsers[index]
-                                                        ['role']));
-                                              },
-                                              child: const Card(
-                                                color: Colors.greenAccent,
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(
-                                                          Icons
-                                                              .volunteer_activism,
-                                                          size: 18,
-                                                          color: Colors.white),
-                                                      SizedBox(width: 5),
-                                                      Text(
-                                                        "Donate",
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
+                                            SizedBox(width: 3),
+                                            Text(
+                                              "View Profile",
+                                              style: TextStyle(
+                                                  color: Colors.greenAccent,
+                                                  fontSize: 10),
                                             ),
                                           ],
-                                        )
-                                      ],
-                                    ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                             ),

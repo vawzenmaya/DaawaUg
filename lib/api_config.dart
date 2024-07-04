@@ -76,8 +76,18 @@ class ApiConfig {
       '$baseUrl/daawatokug/channels/fetch_account_followers.php';
   static String fetchPaymentDetailsUrl =
       '$baseUrl/daawatokug/channels/fetch_payment_details.php';
+  static String fetchPaymentInfomationUrl =
+      '$baseUrl/daawatokug/channels/fetch_payment_information.php';
   static String updatePaymentDetailsUrl =
       '$baseUrl/daawatokug/channels/update_payment_details.php';
   static String fetchChannelsforDonationUrl =
       '$baseUrl/daawatokug/channels/fetch_donate_channels.php';
+  static const String fetchAllUsersUrl =
+      '$baseUrl/daawatokug/chats/fetch_all_users.php';
+  static String getConversationsUrl =
+      '$baseUrl/daawatokug/chats/fetch_conversations.php';
+  static String getMessagesUrl = '$baseUrl/daawatokug/chats/fetch_messages.php';
+  static String sendMessageUrl = '$baseUrl/daawatokug/chats/send_message.php';
+  static String deleteMessageUrl =
+      '$baseUrl/daawatokug/chats/delete_message.php';
 }

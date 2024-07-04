@@ -148,7 +148,10 @@ class _HomeSideBarState extends State<HomeSideBar>
         _videoService.pause();
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const FollowPage()),
+          MaterialPageRoute(
+              builder: (context) => const FollowPage(
+                    userId: '',
+                  )),
         ).then((_) {
           _videoService.play();
         });

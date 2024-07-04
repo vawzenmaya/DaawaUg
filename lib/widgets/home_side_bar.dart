@@ -14,7 +14,8 @@ class HomeSideBar extends StatefulWidget {
   State<HomeSideBar> createState() => _HomeSideBarState();
 }
 
-class _HomeSideBarState extends State<HomeSideBar> with SingleTickerProviderStateMixin {
+class _HomeSideBarState extends State<HomeSideBar>
+    with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late VideoService _videoService;
 
@@ -38,7 +39,10 @@ class _HomeSideBarState extends State<HomeSideBar> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    TextStyle style = Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 13, color: Colors.white);
+    TextStyle style = Theme.of(context)
+        .textTheme
+        .bodyLarge!
+        .copyWith(fontSize: 13, color: Colors.white);
     return Padding(
       padding: const EdgeInsets.only(right: 10.0),
       child: Column(
@@ -48,19 +52,23 @@ class _HomeSideBarState extends State<HomeSideBar> with SingleTickerProviderStat
           _profileImageButton(widget.video.postedBy.profileImageUrl),
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: _sideBarItem('heart', widget.video.likes.toString(), style, Colors.white),
+            child: _sideBarItem(
+                'heart', widget.video.likes.toString(), style, Colors.white),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: _sideBarItem('question', widget.video.questions, style, Colors.white),
+            child: _sideBarItem(
+                'question', widget.video.questions, style, Colors.white),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: _sideBarItem('comment', widget.video.comments, style, Colors.white),
+            child: _sideBarItem(
+                'comment', widget.video.comments, style, Colors.white),
           ),
           Padding(
             padding: const EdgeInsets.only(right: 10.0),
-            child: _sideBarItem('download', widget.video.downloads.toString(), style, Colors.white),
+            child: _sideBarItem('download', widget.video.downloads.toString(),
+                style, Colors.white),
           ),
           AnimatedBuilder(
             animation: _animationController,
@@ -85,98 +93,100 @@ class _HomeSideBarState extends State<HomeSideBar> with SingleTickerProviderStat
     );
   }
 
-  Widget _sideBarItem(String iconName, String label, TextStyle style, Color iconColor) {
-  Color iconAndTextColor = Colors.grey;
+  Widget _sideBarItem(
+      String iconName, String label, TextStyle style, Color iconColor) {
+    Color iconAndTextColor = Colors.grey;
 
-  // Function to handle liking/unliking
-  void toggleLike() {
-    setState(() {
-      if (iconName == 'heart') {
-        if (widget.video.liked) {
-          widget.video.likes--;
-        } else {
-          widget.video.likes++;
+    // Function to handle liking/unliking
+    void toggleLike() {
+      setState(() {
+        if (iconName == 'heart') {
+          if (widget.video.liked) {
+            widget.video.likes--;
+          } else {
+            widget.video.likes++;
+          }
+          widget.video.liked = !widget.video.liked;
+        } else if (iconName == 'download') {
+          // Downloads always increase
+          widget.video.downloads++;
         }
-        widget.video.liked = !widget.video.liked;
-      } else if (iconName == 'download') {
-        // Downloads always increase
-        widget.video.downloads++;
-      }
-    });
+      });
+    }
+
+    // Determine heart icon color
+    Color heartColor = iconName == 'heart'
+        ? (widget.video.liked ? Colors.red : iconAndTextColor)
+        : iconAndTextColor;
+
+    return GestureDetector(
+      onTap: toggleLike, // Toggle like/unlike on tap
+      child: Column(
+        children: [
+          SvgPicture.asset(
+            'assets/$iconName.svg',
+            color: heartColor, // Use heartColor variable
+            height: 30,
+            width: 30,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text(
+            label,
+            style: style,
+          ),
+        ],
+      ),
+    );
   }
 
-  // Determine heart icon color
-  Color heartColor = iconName == 'heart' ? (widget.video.liked ? Colors.red : iconAndTextColor) : iconAndTextColor;
-
-  return GestureDetector(
-    onTap: toggleLike, // Toggle like/unlike on tap
-    child: Column(
-      children: [
-        SvgPicture.asset(
-          'assets/$iconName.svg',
-          color: heartColor, // Use heartColor variable
-          height: 30,
-          width: 30,
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        Text(
-          label,
-          style: style,
-        ),
-      ],
-    ),
-  );
-}
-
- 
-
   Widget _profileImageButton(String imageUrl) {
-  return GestureDetector(
-    onTap: () {
-      _videoService.pause();
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => const FollowPage()),
-      ).then((_) {
-        _videoService.play();
-      });
-    },
-    child: Stack(
-      clipBehavior: Clip.none,
-      alignment: Alignment.bottomCenter,
-      children: [
-        Container(
-          height: 50,
-          width: 50,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.white),
-            borderRadius: BorderRadius.circular(25),
-            image: DecorationImage(
-              image: AssetImage(imageUrl),
-              fit: BoxFit.cover,
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: -10,
-          child: Container(
+    return GestureDetector(
+      onTap: () {
+        _videoService.pause();
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const FollowPage(
+                    userId: '',
+                  )),
+        ).then((_) {
+          _videoService.play();
+        });
+      },
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.bottomCenter,
+        children: [
+          Container(
+            height: 50,
+            width: 50,
             decoration: BoxDecoration(
-              color: Colors.red,
+              border: Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(25),
-            ),
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 20,
+              image: DecorationImage(
+                image: AssetImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
-
+          Positioned(
+            bottom: -10,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(25),
+              ),
+              child: const Icon(
+                Icons.add,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

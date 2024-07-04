@@ -7,6 +7,8 @@ import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
+import 'package:toktok/pages/profile_page/follow_page.dart';
+import 'package:toktok/pages/profile_page/profile_page.dart';
 import 'package:video_player/video_player.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:intl/intl.dart';
@@ -482,7 +484,29 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                                                             .start,
                                                     children: [
                                                       GestureDetector(
-                                                        onTap: () {},
+                                                        onTap: () {
+                                                          if (_userId !=
+                                                              comment.userId
+                                                                  .toString()) {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        FollowPage(
+                                                                  userId: comment
+                                                                      .userId
+                                                                      .toString(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          } else if (_userId ==
+                                                              comment.userId
+                                                                  .toString()) {
+                                                            Get.to(
+                                                                const ProfilePage());
+                                                          }
+                                                        },
                                                         child: Row(
                                                           children: [
                                                             if (comment
@@ -838,29 +862,62 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     Row(
                       children: [
                         if (widget.video.fullNames != "")
-                          Row(
-                            children: [
-                              Text(
-                                widget.video.fullNames,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              const SizedBox(width: 2),
-                              if (widget.video.role == "admin")
-                                const Icon(Icons.verified,
-                                    color: Colors.yellow, size: 15)
-                              else if (widget.video.role == "channel")
-                                const Icon(Icons.verified,
-                                    color: Colors.blue, size: 15)
-                            ],
+                          GestureDetector(
+                            onTap: () {
+                              if (_userId != widget.video.userId) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FollowPage(
+                                      userId: widget.video.userId,
+                                    ),
+                                  ),
+                                );
+                              } else if (_userId == widget.video.userId) {
+                                Get.to(const ProfilePage());
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  widget.video.fullNames,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(width: 2),
+                                if (widget.video.role == "admin")
+                                  const Icon(Icons.verified,
+                                      color: Colors.yellow, size: 15)
+                                else if (widget.video.role == "channel")
+                                  const Icon(Icons.verified,
+                                      color: Colors.blue, size: 15)
+                              ],
+                            ),
                           )
                         else
-                          Text(
-                            "@${widget.video.userName}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18),
-                            overflow: TextOverflow.ellipsis,
+                          GestureDetector(
+                            onTap: () {
+                              if (_userId != widget.video.userId) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FollowPage(
+                                      userId: widget.video.userId,
+                                    ),
+                                  ),
+                                );
+                              } else if (_userId == widget.video.userId) {
+                                Get.to(const ProfilePage());
+                              }
+                            },
+                            child: Text(
+                              "@${widget.video.userName}",
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
                       ],
                     ),
