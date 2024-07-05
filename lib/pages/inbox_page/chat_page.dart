@@ -344,11 +344,11 @@ class _ChatPageState extends State<ChatPage> {
               ),
             )
           else if (messages.isEmpty)
-            Expanded(
+            const Expanded(
               child: Center(
                 child: Text(
-                  "Start a converstaion with @${widget.username}.",
-                  style: const TextStyle(fontSize: 16, color: Colors.white),
+                  "Type to start a conversation",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
             )

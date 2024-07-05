@@ -2,11 +2,44 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/pages/inbox_page/chat_page.dart';
 import 'package:toktok/pages/inbox_page/start_chat.dart';
+
+class MessageData {
+  final int userid;
+  final String username;
+  final String fullNames;
+  final String profilePic;
+  final String role;
+  final String message;
+  final String datesent;
+
+  MessageData({
+    required this.userid,
+    required this.username,
+    required this.fullNames,
+    required this.profilePic,
+    required this.role,
+    required this.message,
+    required this.datesent,
+  });
+
+  factory MessageData.fromJson(Map<String, dynamic> json) {
+    return MessageData(
+      userid: json['userid'],
+      username: json['username'],
+      fullNames: json['fullNames'],
+      profilePic: json['profilePic'],
+      role: json['role'],
+      message: json['message'],
+      datesent: json['datesent'],
+    );
+  }
+}
 
 class InboxPage extends StatefulWidget {
   const InboxPage({super.key});
@@ -15,53 +48,43 @@ class InboxPage extends StatefulWidget {
 }
 
 class _InboxPageState extends State<InboxPage> {
-  List<dynamic> messages = [];
-  List<dynamic> users = [];
+  List<MessageData> messages = [];
+  List<MessageData> filteredMessages = [];
   bool isLoading = true;
   TextEditingController searchController = TextEditingController();
-  List<dynamic> filteredMessages = [];
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchMessages();
     searchController.addListener(_filterMessages);
   }
 
-  Future<void> fetchData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String userId = prefs.getString('userID') ?? '';
+  Future<void> fetchMessages() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userID');
 
-      final response = await http.post(
-        Uri.parse(ApiConfig.getConversationsUrl),
-        body: {'userId': userId},
-      );
+    if (userId == null) {
+      throw Exception('No user ID found in SharedPreferences');
+    }
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        setState(() {
-          messages = data['messages'];
-          users = data['users'];
-          filteredMessages = messages;
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    } catch (e) {
+    final response = await http.post(
+      Uri.parse(ApiConfig.getConversationsUrl),
+      body: {
+        'userid': userId,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> responseData = json.decode(response.body);
       setState(() {
+        messages =
+            responseData.map((data) => MessageData.fromJson(data)).toList();
+        filteredMessages = messages;
         isLoading = false;
       });
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+    } else {
+      throw Exception('Failed to load messages');
     }
   }
 
@@ -69,14 +92,9 @@ class _InboxPageState extends State<InboxPage> {
     String query = searchController.text.toLowerCase();
     setState(() {
       filteredMessages = messages.where((message) {
-        var user = users.firstWhere(
-          (user) =>
-              user['userid'] == message['fromUserId'] ||
-              user['userid'] == message['toUserId'],
-          orElse: () => null,
-        );
-        return user != null &&
-            (user['fullNames'].toLowerCase().contains(query));
+        return message.username.toLowerCase().contains(query) ||
+            message.fullNames.toLowerCase().contains(query) ||
+            message.message.toLowerCase().contains(query);
       }).toList();
     });
   }
@@ -88,150 +106,39 @@ class _InboxPageState extends State<InboxPage> {
     super.dispose();
   }
 
-  Widget _buildMessageTile(dynamic message) {
-    var user = users.firstWhere(
-      (user) =>
-          user['userid'] == message['fromUserId'] ||
-          user['userid'] == message['toUserId'],
-      orElse: () => null,
-    );
-
-    if (user == null) return const SizedBox.shrink();
-
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatPage(
-              userId: user['userid'],
-              username: user['username'],
-              fullNames: user['fullNames'],
-              profilePic: user['profilePic'],
-              role: user['role'],
-            ),
-          ),
-        );
-      },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  if (ApiConfig.emptyProfilePicUrl == user['profilePic'])
-                    Container(
-                      width: 50,
-                      height: 50,
-                      decoration: const BoxDecoration(
-                        color: Colors.grey,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const ClipOval(
-                        child: Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 50,
-                        ),
-                      ),
-                    )
-                  else
-                    Container(
-                      height: 50,
-                      width: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60),
-                        color: Colors.grey,
-                        image: DecorationImage(
-                          image: NetworkImage(user['profilePic']),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(width: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (user['fullNames'] == "" && user['role'] != "user")
-                        const Text(
-                          "No Channel Name",
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        )
-                      else if (user['fullNames'] == "" &&
-                          user['role'] == "user")
-                        const Text(
-                          "No Profile Name",
-                          style: TextStyle(
-                              color: Colors.red, fontWeight: FontWeight.bold),
-                        )
-                      else
-                        Row(
-                          children: [
-                            Text(
-                              user['fullNames'],
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(width: 3),
-                            if (user['role'] == 'admin')
-                              const Icon(
-                                Icons.verified,
-                                color: Colors.yellow,
-                                size: 15,
-                              )
-                            else if (user['role'] == 'channel')
-                              const Icon(
-                                Icons.verified,
-                                color: Colors.blue,
-                                size: 15,
-                              ),
-                          ],
-                        ),
-                      Text(
-                        message['message'],
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Text(
-                    message['datesent'],
-                    style: const TextStyle(
-                        color: Colors.greenAccent, fontSize: 10),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         leading: const Icon(
-          Icons.chat,
+          Icons.mail,
           color: Colors.white,
         ),
+        leadingWidth: 30,
         title: const Text(
-          "DaawaChat",
-          style: TextStyle(color: Colors.white),
+          "Chats",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.settings,
+              color: Colors.white,
+            ),
+          )
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-        child: Column(
-          children: [
-            TextField(
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                labelText: 'Search',
+                labelText: 'Search for your DaawaTok conversations',
                 prefixIcon: Icon(
                   Icons.search,
                   color: Colors.white,
@@ -246,52 +153,154 @@ class _InboxPageState extends State<InboxPage> {
                 ),
               ),
             ),
+          ),
+          if (isLoading)
             Expanded(
-              child: isLoading
-                  ? Center(
-                      child: Lottie.asset(
-                        'assets/loading.json',
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : filteredMessages.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Lottie.asset(
-                                'assets/no_data.json',
-                                width: 150,
-                                height: 150,
-                                fit: BoxFit.cover,
+              child: Center(
+                child: Lottie.asset(
+                  'assets/loading.json',
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )
+          else if (messages.isEmpty)
+            const Expanded(
+              child: Center(
+                child: Text(
+                  "Click the + button below to start chating",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: ListView.builder(
+                itemCount: filteredMessages.length,
+                itemBuilder: (context, index) {
+                  final message = filteredMessages[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Get.to(ChatPage(
+                          userId: message.userid.toString(),
+                          username: message.username,
+                          fullNames: message.fullNames,
+                          profilePic: message.profilePic,
+                          role: message.role));
+                    },
+                    child: Card(
+                        child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          if (ApiConfig.emptyProfilePicUrl ==
+                              message.profilePic)
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: const BoxDecoration(
+                                color: Colors.grey,
+                                shape: BoxShape.circle,
                               ),
-                              const Text(
-                                "No DaawaChat messages found",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
+                              child: const ClipOval(
+                                  child: Icon(
+                                Icons.person,
+                                color: Colors.white,
+                                size: 50,
+                              )),
+                            )
+                          else
+                            Container(
+                              height: 50,
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(60),
+                                color: Colors.grey,
+                                image: DecorationImage(
+                                  image: NetworkImage(message.profilePic),
+                                  fit: BoxFit.cover,
                                 ),
                               ),
+                            ),
+                          const SizedBox(width: 10),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (message.fullNames == "" &&
+                                  message.role != "user")
+                                const Text(
+                                  "No Channel Name",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              else if (message.fullNames == "" &&
+                                  message.role == "user")
+                                const Text(
+                                  "No Profile Name",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              else
+                                Row(
+                                  children: [
+                                    Text(
+                                      message.fullNames,
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    const SizedBox(width: 3),
+                                    if (message.role == 'admin')
+                                      const Icon(
+                                        Icons.verified,
+                                        color: Colors.yellow,
+                                        size: 15,
+                                      )
+                                    else if (message.role == 'channel')
+                                      const Icon(
+                                        Icons.verified,
+                                        color: Colors.blue,
+                                        size: 15,
+                                      )
+                                  ],
+                                ),
+                              Text(
+                                "@${message.username}",
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                              ),
+                              Text(message.message,
+                                  style: const TextStyle(color: Colors.white))
                             ],
                           ),
-                        )
-                      : ListView.builder(
-                          itemCount: filteredMessages.length,
-                          itemBuilder: (context, index) {
-                            return _buildMessageTile(filteredMessages[index]);
-                          },
-                        ),
+                          const Spacer(),
+                          Text(
+                            DateFormat('HH:mm')
+                                .format(DateTime.parse(message.datesent)),
+                            style: const TextStyle(
+                                fontSize: 10, color: Colors.grey),
+                          )
+                        ],
+                      ),
+                    )),
+                  );
+                },
+              ),
             ),
-          ],
-        ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(const StartChat());
         },
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.greenAccent,
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
       ),
     );
   }
