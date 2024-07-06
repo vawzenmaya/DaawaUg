@@ -89,7 +89,7 @@ class _StartChatState extends State<StartChat> {
           ),
         ),
         title: const Text(
-          'DaawaTok Users',
+          'DaawaTokers',
           style: TextStyle(color: Colors.white),
         ),
       ),

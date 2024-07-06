@@ -118,7 +118,7 @@ class _InboxPageState extends State<InboxPage> {
         ),
         leadingWidth: 30,
         title: const Text(
-          "Chats",
+          "Daawa Chats",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -138,7 +138,7 @@ class _InboxPageState extends State<InboxPage> {
             child: TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                labelText: 'Search for your DaawaTok conversations',
+                labelText: 'Search for your Daawa chats',
                 prefixIcon: Icon(
                   Icons.search,
                   color: Colors.white,
@@ -169,7 +169,7 @@ class _InboxPageState extends State<InboxPage> {
             const Expanded(
               child: Center(
                 child: Text(
-                  "Click the + button below to start chating",
+                  "Click the + button below to start chatting",
                   style: TextStyle(fontSize: 16, color: Colors.white),
                 ),
               ),
@@ -296,7 +296,7 @@ class _InboxPageState extends State<InboxPage> {
         onPressed: () {
           Get.to(const StartChat());
         },
-        backgroundColor: Colors.greenAccent,
+        backgroundColor: Colors.green,
         child: const Icon(
           Icons.add,
           color: Colors.white,
