@@ -129,7 +129,7 @@ class _BottomMainMenuState extends State<BottomMainMenu> {
                   child: Icon(Icons.tv),
                 ),
               ),
-              label: 'Channels',
+              label: '',
             ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.email),

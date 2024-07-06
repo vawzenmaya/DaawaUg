@@ -93,9 +93,9 @@ class _PaymentDetailsState extends State<PaymentDetails> {
           final responseData = json.decode(response.body);
           if (response.statusCode == 200 &&
               responseData['status'] == 'success') {
-            Get.back();
             Get.snackbar('Success', 'Payments updated successfully',
                 snackPosition: SnackPosition.TOP, backgroundColor: Colors.grey);
+            _fetchUserData();
           } else {
             if (responseData['status'] == 'error') {
               Get.snackbar(

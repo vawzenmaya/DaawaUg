@@ -6,7 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/username_text_formatters.dart';
-import 'package:toktok/bottom_menu.dart';
 import 'package:toktok/pages/profile_page/edit_profile_pic.dart';
 
 class EditProfilePage extends StatefulWidget {
@@ -95,12 +94,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
           final responseData = json.decode(response.body);
           if (response.statusCode == 200 &&
               responseData['status'] == 'success') {
-            Get.to(const BottomMainMenu());
-            Get.snackbar(
-              'Success',
-              'Profile updated successfully',
-              snackPosition: SnackPosition.TOP,
-            );
+            Get.snackbar('Success', 'Profile updated successfully',
+                snackPosition: SnackPosition.TOP, backgroundColor: Colors.grey);
+            _fetchUserData();
           } else {
             if (responseData['status'] == 'error') {
               Get.snackbar(

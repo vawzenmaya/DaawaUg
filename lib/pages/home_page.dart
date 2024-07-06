@@ -301,11 +301,24 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       return Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          GestureDetector(
-            onTap: _togglePlayPause,
-            child: AspectRatio(
-              aspectRatio: _controller.value.aspectRatio,
-              child: VideoPlayer(_controller),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: AspectRatio(
+                      aspectRatio: _controller.value.aspectRatio,
+                      child: GestureDetector(
+                        onTap: _togglePlayPause,
+                        child: VideoPlayer(_controller),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -1116,8 +1129,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         setState(() {
           widget.video.commentCount = widget.video.commentCount + 1;
         });
-        Get.snackbar('Successfully', "Commented on this video");
         _commentController.clear();
+        Get.snackbar('Successfully', "Commented on this video");
         Navigator.pop(context);
       } else {
         Get.snackbar('Sorry', "Unknown error happened");
@@ -1175,6 +1188,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                       widget.video.commentCount = widget.video.commentCount - 1;
                     });
                     Get.snackbar('Success', 'Comment deleted successfully');
+
                     Navigator.pop(context);
                   } else {
                     Get.snackbar('Error', responseData['message']);

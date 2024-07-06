@@ -190,106 +190,128 @@ class _InboxPageState extends State<InboxPage> {
                           role: message.role));
                     },
                     child: Card(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          if (ApiConfig.emptyProfilePicUrl ==
-                              message.profilePic)
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: const BoxDecoration(
-                                color: Colors.grey,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const ClipOval(
-                                  child: Icon(
-                                Icons.person,
-                                color: Colors.white,
-                                size: 50,
-                              )),
-                            )
-                          else
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(60),
-                                color: Colors.grey,
-                                image: DecorationImage(
-                                  image: NetworkImage(message.profilePic),
-                                  fit: BoxFit.cover,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: [
+                            if (ApiConfig.emptyProfilePicUrl ==
+                                message.profilePic)
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: const BoxDecoration(
+                                  color: Colors.grey,
+                                  shape: BoxShape.circle,
                                 ),
+                                child: const ClipOval(
+                                    child: Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                  size: 50,
+                                )),
+                              )
+                            else
+                              Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(60),
+                                  color: Colors.grey,
+                                  image: DecorationImage(
+                                    image: NetworkImage(message.profilePic),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  if (message.fullNames == "" &&
+                                      message.role != "user")
+                                    const Text(
+                                      "No Channel Name",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  else if (message.fullNames == "" &&
+                                      message.role == "user")
+                                    const Text(
+                                      "No Profile Name",
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold),
+                                    )
+                                  else
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            message.fullNames,
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 3),
+                                        if (message.role == 'admin')
+                                          const Icon(
+                                            Icons.verified,
+                                            color: Colors.yellow,
+                                            size: 15,
+                                          )
+                                        else if (message.role == 'channel')
+                                          const Icon(
+                                            Icons.verified,
+                                            color: Colors.blue,
+                                            size: 15,
+                                          )
+                                      ],
+                                    ),
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          "@${message.username}",
+                                          style: const TextStyle(
+                                              color: Colors.grey, fontSize: 12),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          message.message,
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                          const SizedBox(width: 10),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if (message.fullNames == "" &&
-                                  message.role != "user")
-                                const Text(
-                                  "No Channel Name",
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              else if (message.fullNames == "" &&
-                                  message.role == "user")
-                                const Text(
-                                  "No Profile Name",
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              else
-                                Row(
-                                  children: [
-                                    Text(
-                                      message.fullNames,
-                                      style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    const SizedBox(width: 3),
-                                    if (message.role == 'admin')
-                                      const Icon(
-                                        Icons.verified,
-                                        color: Colors.yellow,
-                                        size: 15,
-                                      )
-                                    else if (message.role == 'channel')
-                                      const Icon(
-                                        Icons.verified,
-                                        color: Colors.blue,
-                                        size: 15,
-                                      )
-                                  ],
-                                ),
-                              Text(
-                                "@${message.username}",
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 12),
-                              ),
-                              Text(message.message,
-                                  style: const TextStyle(color: Colors.white))
-                            ],
-                          ),
-                          const Spacer(),
-                          Text(
-                            DateFormat('HH:mm')
-                                .format(DateTime.parse(message.datesent)),
-                            style: const TextStyle(
-                                fontSize: 10, color: Colors.grey),
-                          )
-                        ],
+                            const Spacer(),
+                            Text(
+                              DateFormat('HH:mm')
+                                  .format(DateTime.parse(message.datesent)),
+                              style: const TextStyle(
+                                  fontSize: 10, color: Colors.grey),
+                            ),
+                          ],
+                        ),
                       ),
-                    )),
+                    ),
                   );
                 },
               ),
-            ),
+            )
         ],
       ),
       floatingActionButton: FloatingActionButton(
