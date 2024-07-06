@@ -229,13 +229,30 @@ class _ProfileDonationState extends State<ProfileDonation> {
                                         Image.asset("assets/images/mobile.png"),
                                   ),
                                   const SizedBox(width: 10),
-                                  const Text(
-                                    "Donate with Airtel or MTN",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20),
-                                  ),
+                                  if (airtel != "" && mtn != "")
+                                    const Text(
+                                      "Donate with Airtel or MTN",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    )
+                                  else if (airtel != "" && mtn == "")
+                                    const Text(
+                                      "Donate with Airtel Money",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    )
+                                  else if (airtel == "" && mtn != "")
+                                    const Text(
+                                      "Donate with Mobile Money",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
                                 ],
                               ),
                               if (airtel != "") const SizedBox(height: 10),
