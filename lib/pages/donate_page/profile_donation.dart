@@ -204,10 +204,9 @@ class _ProfileDonationState extends State<ProfileDonation> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            if ((airtel != "" || mtn != "") &&
-                bankName != "" &&
-                accountNumber != "" &&
-                accountName != "")
+            if (airtel != "" ||
+                mtn != "" ||
+                (bankName != "" && accountNumber != "" && accountName != ""))
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
