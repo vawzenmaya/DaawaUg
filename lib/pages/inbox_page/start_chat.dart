@@ -47,7 +47,7 @@ class _StartChatState extends State<StartChat> {
         fetchedUsers = users.map((user) => user['userid'].toString()).toSet();
       });
     } else {
-      throw Exception('Failed to load users');
+      fetchUsers();
     }
   }
 

@@ -63,13 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       }
     } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      _fetchUserData();
     }
   }
 
@@ -119,13 +113,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       }
     } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      _saveChanges();
     }
   }
 

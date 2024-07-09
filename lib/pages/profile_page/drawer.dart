@@ -25,37 +25,27 @@ class _ProfilePageDrawerState extends State<ProfilePageDrawer> {
   String _role = '';
 
   Future<void> fetchUserData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String userid = prefs.getString('userID') ?? '';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userid = prefs.getString('userID') ?? '';
 
-      final response = await http.get(
-        Uri.parse(ApiConfig.getUserDataUrl(userid)),
-      );
+    final response = await http.get(
+      Uri.parse(ApiConfig.getUserDataUrl(userid)),
+    );
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
 
-        setState(() {
-          _username = responseData['username'] ?? '';
-          _fullNames = responseData['fullNames'] ?? '';
-          _email = responseData['email'] ?? 'No email';
-          _phoneNumber = responseData['phoneNumber'] ?? '';
-          _biography = responseData['biography'] ?? '';
-          _profilePic = responseData['profilePic'] ?? '';
-          _role = responseData['role'] ?? '';
-        });
-      } else {
-        //print('Failed to fetch user details');
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      setState(() {
+        _username = responseData['username'] ?? '';
+        _fullNames = responseData['fullNames'] ?? '';
+        _email = responseData['email'] ?? 'No email';
+        _phoneNumber = responseData['phoneNumber'] ?? '';
+        _biography = responseData['biography'] ?? '';
+        _profilePic = responseData['profilePic'] ?? '';
+        _role = responseData['role'] ?? '';
+      });
+    } else {
+      fetchUserData();
     }
   }
 

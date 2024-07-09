@@ -43,7 +43,7 @@ class _ManageApprovedChannelsState extends State<ManageApprovedChannels> {
         filteredUsers = users;
       });
     } else {
-      throw Exception('Failed to load channels');
+      fetchUsers();
     }
   }
 
@@ -72,7 +72,7 @@ class _ManageApprovedChannelsState extends State<ManageApprovedChannels> {
         adminUsernames.remove(username);
       });
     } else {
-      throw Exception('Failed to update user role');
+      _approveUser(username);
     }
   }
 
@@ -91,7 +91,7 @@ class _ManageApprovedChannelsState extends State<ManageApprovedChannels> {
         unapprovedUsernames.remove(username);
       });
     } else {
-      throw Exception('Failed to update user role');
+      _approveAdmin(username);
     }
   }
 

@@ -53,7 +53,7 @@ class _ManageApprovedAdminsState extends State<ManageApprovedAdmins> {
         filteredUsers = users;
       });
     } else {
-      throw Exception('Failed to load admins');
+      fetchUsers();
     }
   }
 
@@ -82,7 +82,7 @@ class _ManageApprovedAdminsState extends State<ManageApprovedAdmins> {
         adminUsernames.remove(username);
       });
     } else {
-      throw Exception('Failed to update user role');
+      _approveUser(username);
     }
   }
 
@@ -101,7 +101,7 @@ class _ManageApprovedAdminsState extends State<ManageApprovedAdmins> {
         unapprovedUsernames.remove(username);
       });
     } else {
-      throw Exception('Failed to update user role');
+      _approveAdmin(username);
     }
   }
 

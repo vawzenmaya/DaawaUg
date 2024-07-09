@@ -31,43 +31,34 @@ class _PaymentDetailsState extends State<PaymentDetails> {
   }
 
   Future<void> _fetchUserData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? userid = prefs.getString('userID');
-      if (userid != null) {
-        final response = await http.post(
-          Uri.parse(ApiConfig.fetchPaymentDetailsUrl),
-          body: {'userid': userid},
-        );
-
-        if (response.statusCode == 200) {
-          final userData = json.decode(response.body);
-          setState(() {
-            _airtelMerchantCodeController.text = userData['airtel'];
-            _mtnMerchantCodeController.text = userData['mtn'];
-            _bankNameController.text = userData['bankname'];
-            _currency = userData['currency'];
-            _accountNumberController.text = userData['accountnumber'];
-            _accountNameController.text = userData['accountname'];
-          });
-        } else {
-          Get.snackbar(
-            'Error',
-            'Failed to fetch your data',
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            snackPosition: SnackPosition.TOP,
-          );
-        }
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userid = prefs.getString('userID');
+    if (userid != null) {
+      final response = await http.post(
+        Uri.parse(ApiConfig.fetchPaymentDetailsUrl),
+        body: {'userid': userid},
       );
+
+      if (response.statusCode == 200) {
+        final userData = json.decode(response.body);
+        setState(() {
+          _airtelMerchantCodeController.text = userData['airtel'];
+          _mtnMerchantCodeController.text = userData['mtn'];
+          _bankNameController.text = userData['bankname'];
+          _currency = userData['currency'];
+          _accountNumberController.text = userData['accountnumber'];
+          _accountNameController.text = userData['accountname'];
+        });
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to fetch your data',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+        _fetchUserData();
+      }
     }
   }
 
@@ -118,13 +109,7 @@ class _PaymentDetailsState extends State<PaymentDetails> {
         }
       }
     } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      _saveChanges();
     }
   }
 

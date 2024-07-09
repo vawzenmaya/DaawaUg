@@ -46,7 +46,7 @@ class _VideosTabState extends State<VideosTab> {
         isLoading = false;
       });
     } else {
-      // Handle error
+      fetchVideos();
       setState(() {
         isLoading = false;
       });

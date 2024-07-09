@@ -46,7 +46,7 @@ class _UnfollowChannelsPageState extends State<UnfollowChannelsPage> {
             users.map((user) => user['userid'].toString()).toSet();
       });
     } else {
-      throw Exception('Failed to load channels');
+      fetchChannels();
     }
   }
 
@@ -95,7 +95,7 @@ class _UnfollowChannelsPageState extends State<UnfollowChannelsPage> {
         followedChannels.add(userid);
       });
     } else {
-      throw Exception('Failed to follow this channel');
+      _followChannel(userid);
     }
   }
 
@@ -120,7 +120,7 @@ class _UnfollowChannelsPageState extends State<UnfollowChannelsPage> {
         followedChannels.remove(userid);
       });
     } else {
-      throw Exception('Failed to unfollow this channel');
+      _unfollowChannel(userid);
     }
   }
 

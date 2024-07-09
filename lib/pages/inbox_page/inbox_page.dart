@@ -84,7 +84,7 @@ class _InboxPageState extends State<InboxPage> {
         isLoading = false;
       });
     } else {
-      throw Exception('Failed to load messages');
+      fetchMessages();
     }
   }
 

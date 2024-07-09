@@ -33,35 +33,25 @@ class _ProfilePageState extends State<ProfilePage> {
   int likesCount = 0;
 
   Future<void> fetchUserData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String userid = prefs.getString('userID') ?? '';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userid = prefs.getString('userID') ?? '';
 
-      final response = await http.get(
-        Uri.parse(ApiConfig.getUserDataUrl(userid)),
-      );
+    final response = await http.get(
+      Uri.parse(ApiConfig.getUserDataUrl(userid)),
+    );
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
 
-        setState(() {
-          _username = responseData['username'] ?? '';
-          _fullNames = responseData['fullNames'] ?? '';
-          _biography = responseData['biography'] ?? '';
-          _profilePic = responseData['profilePic'] ?? '';
-          _role = responseData['role'] ?? '';
-        });
-      } else {
-        //print('Failed to fetch user details');
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      setState(() {
+        _username = responseData['username'] ?? '';
+        _fullNames = responseData['fullNames'] ?? '';
+        _biography = responseData['biography'] ?? '';
+        _profilePic = responseData['profilePic'] ?? '';
+        _role = responseData['role'] ?? '';
+      });
+    } else {
+      fetchUserData();
     }
   }
 
@@ -83,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
         followingCount = json.decode(response.body)['followingCount'];
       });
     } else {
-      throw Exception('Failed to load following count');
+      fetchFollowingCount();
     }
   }
 
@@ -105,7 +95,7 @@ class _ProfilePageState extends State<ProfilePage> {
         followerCount = json.decode(response.body)['followerCount'];
       });
     } else {
-      throw Exception('Failed to load follower count');
+      fetchFollowerCount();
     }
   }
 
@@ -127,7 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
         likesCount = json.decode(response.body)['likesCount'];
       });
     } else {
-      throw Exception('Failed to load likes count');
+      fetchAccountLikesCount();
     }
   }
 

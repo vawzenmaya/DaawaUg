@@ -7,7 +7,6 @@ import 'package:toktok/pages/inbox_page/inbox_page.dart';
 import 'package:toktok/pages/profile_page/profile_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:get/get.dart';
 import 'dart:convert';
 
 class BottomMainMenu extends StatefulWidget {
@@ -37,31 +36,21 @@ class _BottomMainMenuState extends State<BottomMainMenu> {
   String _role = '';
 
   Future<void> fetchUserData() async {
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String userid = prefs.getString('userID') ?? '';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userid = prefs.getString('userID') ?? '';
 
-      final response = await http.get(
-        Uri.parse(ApiConfig.getUserDataUrl(userid)),
-      );
+    final response = await http.get(
+      Uri.parse(ApiConfig.getUserDataUrl(userid)),
+    );
 
-      if (response.statusCode == 200) {
-        final responseData = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
 
-        setState(() {
-          _role = responseData['role'] ?? '';
-        });
-      } else {
-        //print('Failed to fetch user details');
-      }
-    } catch (e) {
-      Get.snackbar(
-        'Network Error',
-        'Check your internet connection',
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
+      setState(() {
+        _role = responseData['role'] ?? '';
+      });
+    } else {
+      fetchUserData();
     }
   }
 

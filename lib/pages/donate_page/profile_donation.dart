@@ -52,7 +52,7 @@ class _ProfileDonationState extends State<ProfileDonation> {
         accountName = data['accountname'];
       });
     } else {
-      throw Exception('Failed to load payment info');
+      fetchPaymentInfo();
     }
   }
 

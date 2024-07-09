@@ -49,7 +49,7 @@ class _DonatePageState extends State<DonatePage> {
         fetchedUsers = users.map((user) => user['userid'].toString()).toSet();
       });
     } else {
-      throw Exception('Failed to load users');
+      fetchUsers();
     }
   }
 

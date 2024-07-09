@@ -66,6 +66,7 @@ class _ChatPageState extends State<ChatPage> {
       setState(() {
         isLoading = false;
       });
+      fetchMessages();
     }
   }
 
@@ -87,7 +88,9 @@ class _ChatPageState extends State<ChatPage> {
       _messageController.clear();
       FocusScope.of(context).unfocus();
       fetchMessages();
-    } else {}
+    } else {
+      sendMessage();
+    }
   }
 
   Future<void> deleteMessage(String messageId) async {
@@ -100,7 +103,9 @@ class _ChatPageState extends State<ChatPage> {
 
     if (response.statusCode == 200) {
       fetchMessages();
-    } else {}
+    } else {
+      deleteMessage(messageId);
+    }
   }
 
   void _showOptionsDialog(BuildContext context, String messageId) {

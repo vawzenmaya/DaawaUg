@@ -42,7 +42,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
         filteredUsers = users;
       });
     } else {
-      throw Exception('Failed to load users');
+      fetchUsers();
     }
   }
 
@@ -70,7 +70,7 @@ class _ApproveChannelsState extends State<ApproveChannels> {
         approvedUsernames.add(username);
       });
     } else {
-      throw Exception('Failed to update user role');
+      _approveUser(username);
     }
   }
 

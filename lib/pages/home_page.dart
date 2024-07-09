@@ -1106,6 +1106,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           body.map((dynamic item) => Comment.fromJson(item)).toList();
       return comments;
     } else {
+      fetchComments();
       throw Exception('Failed to load comments');
     }
   }
@@ -1136,7 +1137,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         Get.snackbar('Sorry', "Unknown error happened");
       }
     } else {
-      // print('Server error: ${response.statusCode}');
+      sendComment(videoId);
     }
   }
 
@@ -1195,6 +1196,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   }
                 } else {
                   Get.snackbar('Error', 'Server error: ${response.statusCode}');
+                  deleteComment(commentId);
                 }
               },
               child: const Text(
@@ -1298,6 +1300,7 @@ Future<List<Video>> fetchVideos() async {
     List<dynamic> data = jsonDecode(response.body);
     return data.map((json) => Video.fromJson(json)).toList();
   } else {
+    fetchVideos();
     throw Exception('Failed to load videos');
   }
 }

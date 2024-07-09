@@ -46,7 +46,7 @@ class _FollowersPageState extends State<FollowersPage> {
             users.map((user) => user['userid'].toString()).toSet();
       });
     } else {
-      throw Exception('Failed to load channels');
+      fetchChannels();
     }
   }
 

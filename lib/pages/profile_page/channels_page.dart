@@ -43,7 +43,7 @@ class _FollowChannelsPageState extends State<FollowChannelsPage> {
         filteredUsers = users;
       });
     } else {
-      throw Exception('Failed to load channels');
+      fetchChannels();
     }
   }
 
@@ -92,7 +92,7 @@ class _FollowChannelsPageState extends State<FollowChannelsPage> {
         followedChannels.add(userid);
       });
     } else {
-      throw Exception('Failed to follow this channel');
+      _followChannel(userid);
     }
   }
 
@@ -117,7 +117,7 @@ class _FollowChannelsPageState extends State<FollowChannelsPage> {
         followedChannels.remove(userid);
       });
     } else {
-      throw Exception('Failed to unfollow this channel');
+      _unfollowChannel(userid);
     }
   }
 
