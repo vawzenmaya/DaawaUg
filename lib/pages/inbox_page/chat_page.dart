@@ -8,6 +8,7 @@ import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:toktok/pages/profile_page/follow_page.dart';
 
 class ChatPage extends StatefulWidget {
@@ -194,6 +195,7 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    initializeDateFormatting();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -394,7 +396,8 @@ class _ChatPageState extends State<ChatPage> {
                                     ),
                                     Text(
                                       DateFormat('HH:mm').format(
-                                          DateTime.parse(message['datesent'])),
+                                          DateTime.parse(message['datesent'])
+                                              .toLocal()),
                                       style: const TextStyle(
                                           fontSize: 10, color: Colors.white),
                                     )
@@ -436,8 +439,8 @@ class _ChatPageState extends State<ChatPage> {
                                       ),
                                       Text(
                                         DateFormat('HH:mm').format(
-                                            DateTime.parse(
-                                                message['datesent'])),
+                                            DateTime.parse(message['datesent'])
+                                                .toLocal()),
                                         style: const TextStyle(
                                             fontSize: 10, color: Colors.white),
                                       )
