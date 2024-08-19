@@ -1,12 +1,12 @@
 // EMULATOR:  http://10.0.2.2
 
-// ONLINE:  https://daawatokug.000webhostapp.com/
+// ONLINE:  https://daawatok.com
 
 // OFFLINE:  http://192.168.232.21
 
 class ApiConfig {
   static const String baseUrl =
-      'https://daawatokug.000webhostapp.com'; // Replace IP address
+      'https://daawatok.com'; // Replace IP address
 
   // API endpoints
   static const String signinUrl = '$baseUrl/daawatokug/auth/signin.php';
