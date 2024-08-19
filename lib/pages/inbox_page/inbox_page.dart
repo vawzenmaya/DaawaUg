@@ -181,22 +181,6 @@ class _InboxPageState extends State<InboxPage> {
                 itemBuilder: (context, index) {
                   final message = filteredMessages[index];
 
-                  // Parse the UTC time string from the database
-                  DateTime utcTime = DateTime.parse(message.datesent).toUtc();
-
-                  // Convert UTC time to the local time
-                  DateTime localTime = utcTime.toLocal();
-
-                  // Determine the time format based on the locale
-                  String timeFormat =
-                      MediaQuery.of(context).alwaysUse24HourFormat
-                          ? 'HH:mm'
-                          : 'hh:mm a';
-
-                  // Format the local time for display
-                  String formattedTime =
-                      DateFormat(timeFormat).format(localTime);
-
                   return GestureDetector(
                     onTap: () {
                       Get.to(ChatPage(
@@ -316,7 +300,8 @@ class _InboxPageState extends State<InboxPage> {
                             ),
                             const Spacer(),
                             Text(
-                              formattedTime,
+                              DateFormat('HH:mm')
+                                  .format(DateTime.parse(message.datesent)),
                               style: const TextStyle(
                                   fontSize: 10, color: Colors.grey),
                             ),

@@ -4,11 +4,10 @@ import 'dart:convert';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
-import 'package:intl/intl.dart';
-import 'package:timezone/timezone.dart' as tz;
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:toktok/pages/profile_page/follow_page.dart';
 
@@ -367,30 +366,6 @@ class _ChatPageState extends State<ChatPage> {
                 itemCount: messages.length,
                 itemBuilder: (context, index) {
                   var message = messages[index];
-
-                  // Parse the UTC time string
-                  DateTime utcTime = DateTime.parse(message['datesent']);
-
-                  // Get the current timezone of the device
-                  tz.TZDateTime localTime =
-                      tz.TZDateTime.from(utcTime, tz.local);
-
-                  // Get the current locale's date format
-                  String locale = Localizations.localeOf(context).toString();
-
-                  // Determine the time format based on the locale
-                  String? timeFormat = DateFormat('HH:mm', locale).pattern;
-
-                  // Format the time based on the time format
-                  String formattedTime;
-                  if (timeFormat!.contains('HH')) {
-                    // 24-hour format
-                    formattedTime = DateFormat.Hm(locale).format(localTime);
-                  } else {
-                    // 12-hour format
-                    formattedTime = DateFormat.jm(locale).format(localTime);
-                  }
-
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
                     child: Column(
@@ -425,7 +400,8 @@ class _ChatPageState extends State<ChatPage> {
                                       ),
                                     ),
                                     Text(
-                                      formattedTime,
+                                      DateFormat('HH:mm').format(
+                                          DateTime.parse(message['datesent'])),
                                       style: const TextStyle(
                                           fontSize: 10, color: Colors.white),
                                     )
@@ -466,7 +442,9 @@ class _ChatPageState extends State<ChatPage> {
                                         ),
                                       ),
                                       Text(
-                                        formattedTime,
+                                        DateFormat('HH:mm').format(
+                                            DateTime.parse(
+                                                message['datesent'])),
                                         style: const TextStyle(
                                             fontSize: 10, color: Colors.white),
                                       )
