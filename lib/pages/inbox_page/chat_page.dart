@@ -48,11 +48,14 @@ class _ChatPageState extends State<ChatPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? loggedInUserId = prefs.getString('userID');
 
+    final int timezoneOffset = DateTime.now().timeZoneOffset.inHours;
+
     final response = await http.post(
       Uri.parse(ApiConfig.getMessagesUrl),
       body: {
         'userId1': loggedInUserId!,
         'userId2': widget.userId,
+        'timezoneOffset': timezoneOffset.toString(),
       },
     );
 

@@ -68,10 +68,13 @@ class _InboxPageState extends State<InboxPage> {
       throw Exception('No user ID found in SharedPreferences');
     }
 
+    final int timezoneOffset = DateTime.now().timeZoneOffset.inHours;
+
     final response = await http.post(
       Uri.parse(ApiConfig.getConversationsUrl),
       body: {
         'userid': userId,
+        'timezoneOffset': timezoneOffset.toString(),
       },
     );
 
