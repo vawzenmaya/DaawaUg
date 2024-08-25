@@ -1,0 +1,8 @@
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/jgot.png"
+
+  #RUN THE COMMAND:=> flutter  pub run flutter_launcher_icons:main
+
+  #TO RENAME THE APP RUN:=> flutter pub run rename_app:main all="DaawaTok"
