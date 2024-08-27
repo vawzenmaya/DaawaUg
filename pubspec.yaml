@@ -105,6 +105,7 @@ flutter:
     - assets/images/MTNandAirtel.jpg
     - assets/images/airtel.webp
     - assets/images/mtn.jpeg
+    - assets/images/logo.png
     - assets/images/mobile.png
     - assets/images/bankaccount.png
     - assets/upload.png

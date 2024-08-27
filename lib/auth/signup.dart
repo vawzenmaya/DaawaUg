@@ -109,9 +109,13 @@ class _SignUpPageState extends State<SignUpPage> {
           padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
           child: Column(
             children: [
-              const SizedBox(
-                height: 100,
+              const SizedBox(height: 100),
+              Image.asset(
+                'assets/images/logo.png',
+                width: 150,
+                height: 150,
               ),
+              const SizedBox(height: 20),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -119,7 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     'DaawaTok',
                     style: TextStyle(
                         color: Colors.greenAccent,
-                        fontSize: 50,
+                        fontSize: 20,
                         fontWeight: FontWeight.w400),
                   ),
                 ],
