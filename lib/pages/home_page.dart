@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toktok/api_config.dart';
 import 'package:toktok/pages/profile_page/follow_page.dart';
 import 'package:toktok/pages/profile_page/profile_page.dart';
+import 'package:toktok/pages/search_page.dart';
 import 'package:video_player/video_player.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:intl/intl.dart';
@@ -201,8 +202,13 @@ class _HomePageState extends State<HomePage> {
           actions: [
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-              child: IconButton(
-                onPressed: () {},
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SearchPage()),
+                    );
+                  },
                 icon: const Icon(
                   Icons.search,
                   color: Colors.white,
