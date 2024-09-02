@@ -12,6 +12,7 @@ import 'package:toktok/pages/profile_page/profile_page.dart';
 import 'package:video_player/video_player.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
 
 class Video {
@@ -116,6 +117,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _isForYouSelected = true;
   late Future<List<Video>> futureVideos;
+
+  final CacheManager cacheManager = CacheManager(
+    Config(
+      'customCacheKey',
+      stalePeriod: const Duration(days: 1),
+      maxNrOfCacheObjects: 20,
+    ),
+  );
 
   @override
   void initState() {
@@ -223,7 +232,13 @@ class _HomePageState extends State<HomePage> {
               scrollDirection: Axis.vertical,
               itemCount: videos.length,
               itemBuilder: (context, index) {
-                return VideoPlayerWidget(video: videos[index]);
+                return VideoPlayerWidget(
+                  video: videos[index],
+                  cacheManager: cacheManager,
+                  onVideoEnd: () {
+                    preloadNextVideos(videos, index);
+                  },
+                );
               },
             );
           }
@@ -231,18 +246,33 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  void preloadNextVideos(List<Video> videos, int currentIndex) async {
+    for (int i = currentIndex + 1;
+        i <= currentIndex + 5 && i < videos.length;
+        i++) {
+      await cacheManager.downloadFile(videos[i].videoUrl);
+    }
+  }
 }
 
 class VideoPlayerWidget extends StatefulWidget {
   final Video video;
-  const VideoPlayerWidget({super.key, required this.video});
+  final CacheManager cacheManager;
+  final VoidCallback onVideoEnd;
+  const VideoPlayerWidget({
+    super.key,
+    required this.video,
+    required this.cacheManager,
+    required this.onVideoEnd,
+  });
   @override
   // ignore: library_private_types_in_public_api
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
+  VideoPlayerController? _controller;
   bool _isLiked = false;
   bool _isFavorite = false;
   final _formKey = GlobalKey<FormState>();
@@ -266,12 +296,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     fetchlike();
     fetchfavorite();
     fetchComments();
-    _controller = VideoPlayerController.network(widget.video.videoUrl)
-      ..initialize().then((_) {
-        setState(() {});
-        _controller.play();
-        _controller.setLooping(true);
-      });
+    _initializeVideoPlayer();
     getUserId().then((userId) {
       setState(() {
         _userId = userId;
@@ -279,15 +304,39 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     });
   }
 
+  Future<void> _initializeVideoPlayer() async {
+    final fileInfo =
+        await widget.cacheManager.getFileFromCache(widget.video.videoUrl);
+
+    if (fileInfo != null) {
+      _controller = VideoPlayerController.file(fileInfo.file);
+    } else {
+      final file =
+          await widget.cacheManager.getSingleFile(widget.video.videoUrl);
+      _controller = VideoPlayerController.file(file);
+    }
+
+    _controller?.initialize().then((_) {
+      setState(() {});
+      _controller!.play();
+      _controller!.setLooping(true);
+      _controller!.addListener(() {
+        if (_controller!.value.position == _controller!.value.duration) {
+          widget.onVideoEnd();
+        }
+      });
+    });
+  }
+
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   void _togglePlayPause() {
     setState(() {
-      _controller.value.isPlaying ? _controller.pause() : _controller.play();
+      _controller!.value.isPlaying ? _controller!.pause() : _controller!.play();
     });
   }
 
@@ -297,7 +346,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     String formattedDatePosted =
         dateFormat.format(DateTime.parse(widget.video.datePosted));
 
-    if (_controller.value.isInitialized) {
+    if (_controller != null && _controller!.value.isInitialized) {
       return Stack(
         alignment: Alignment.bottomCenter,
         children: [
@@ -310,10 +359,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   child: Align(
                     alignment: Alignment.center,
                     child: AspectRatio(
-                      aspectRatio: _controller.value.aspectRatio,
+                      aspectRatio: _controller!.value.aspectRatio,
                       child: GestureDetector(
                         onTap: _togglePlayPause,
-                        child: VideoPlayer(_controller),
+                        child: VideoPlayer(_controller!),
                       ),
                     ),
                   ),
@@ -989,7 +1038,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             ],
           ),
           VideoProgressIndicator(
-            _controller,
+            _controller!,
             allowScrubbing: true,
             colors: const VideoProgressColors(
               playedColor: Colors.greenAccent,
