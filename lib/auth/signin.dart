@@ -172,12 +172,6 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              Image.asset(
-                'assets/images/logo.png',
-                width: 150,
-                height: 150,
-              ),
-              const SizedBox(height: 20),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -185,7 +179,7 @@ class _SignInPageState extends State<SignInPage> {
                     'DaawaTok',
                     style: TextStyle(
                         color: Colors.greenAccent,
-                        fontSize: 20,
+                        fontSize: 50,
                         fontWeight: FontWeight.w400),
                   ),
                 ],
