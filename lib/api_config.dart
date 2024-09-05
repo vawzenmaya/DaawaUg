@@ -6,7 +6,7 @@
 
 class ApiConfig {
   static const String baseUrl =
-      'https://daawatok.com'; // Replace IP address
+      'https://daawatok.com';
 
   // API endpoints
   static const String signinUrl = '$baseUrl/daawatokug/auth/signin.php';

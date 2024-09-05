@@ -89,7 +89,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 5),
             const Text(
-              '©DaawaTok Uganda',
+              '©Develop with Effect',
               style: TextStyle(color: Colors.grey),
             ),
             const SizedBox(height: 20),
