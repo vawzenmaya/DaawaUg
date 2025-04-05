@@ -5,11 +5,18 @@
 // OFFLINE:  http://192.168.232.21
 
 class ApiConfig {
-  static const String baseUrl =
-      'https://daawatok.com'; // Replace IP address
+  static const String baseUrl = 'https://daawatok.com'; // Replace IP address
 
   // API endpoints
   static const String signinUrl = '$baseUrl/daawatokug/auth/signin.php';
+  static const String emailPasswordCodeUrl =
+      '$baseUrl/daawatokug/auth/email_password_code.php';
+  static const String updatePasswordUrl =
+      '$baseUrl/daawatokug/auth/email_password_update.php';
+  static const String emailRegCodeUrl =
+      '$baseUrl/daawatokug/auth/email_reg_verification.php';
+  static const String emailRegCodeVerificationUrl =
+      '$baseUrl/daawatokug/auth/verify_email_reg_code.php';
   static const String signupWithEmailUrl =
       '$baseUrl/daawatokug/auth/signup_with_email.php';
   static const String signupWithPhoneUrl =

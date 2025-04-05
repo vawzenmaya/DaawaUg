@@ -3,19 +3,21 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:pin_code_text_field/pin_code_text_field.dart';
 import 'package:toktok/api_config.dart';
-import 'package:toktok/auth/register_finish_email.dart';
+import 'package:toktok/auth/forgot_password_email_update.dart';
 import 'dart:convert';
 
-class RegisterVerifyEmail extends StatefulWidget {
+import 'package:toktok/auth/signin.dart';
+
+class EmailPasswordRestCode extends StatefulWidget {
   final String emailAddress;
 
-  const RegisterVerifyEmail({super.key, required this.emailAddress});
+  const EmailPasswordRestCode({super.key, required this.emailAddress});
 
   @override
-  State<RegisterVerifyEmail> createState() => _RegisterVerifyEmailState();
+  State<EmailPasswordRestCode> createState() => _EmailPasswordRestCodeState();
 }
 
-class _RegisterVerifyEmailState extends State<RegisterVerifyEmail> {
+class _EmailPasswordRestCodeState extends State<EmailPasswordRestCode> {
   bool _isCodeVerified = false;
   String _code = '';
   bool _isLoading = false;
@@ -38,16 +40,8 @@ class _RegisterVerifyEmailState extends State<RegisterVerifyEmail> {
 
       final data = json.decode(response.body);
       if (response.statusCode == 200 && data['status'] == 'success') {
-        Get.offAll(() => RegisterFinishEmail(
-              emailAddress: widget.emailAddress,
-            ));
-        Get.snackbar(
-          'Email Verification',
-          'Your account is succussfully verified.',
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 3),
-        );
+        Get.offAll(
+            () => EmailPasswordUpdate(emailAddress: widget.emailAddress));
       } else {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
@@ -97,12 +91,12 @@ class _RegisterVerifyEmailState extends State<RegisterVerifyEmail> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Enter the Verification Code',
+                'Enter the Password Reset Code',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
               const SizedBox(height: 20),
               Text(
-                'The registration verification code has been sent via Email to ${widget.emailAddress}',
+                'The code has been sent via Email to ${widget.emailAddress}',
                 textAlign: TextAlign.center,
                 style: const TextStyle(color: Colors.grey),
               ),
@@ -174,10 +168,10 @@ class _RegisterVerifyEmailState extends State<RegisterVerifyEmail> {
                       color: Colors.greenAccent, size: 15),
                   InkWell(
                       onTap: () {
-                        Get.back();
+                        Get.offAll(() => const SignInPage());
                       },
                       child: const Text(
-                        '  Back',
+                        '  Back to login',
                         style: TextStyle(
                             color: Colors.greenAccent,
                             fontWeight: FontWeight.bold),

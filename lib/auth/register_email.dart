@@ -1,11 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:toktok/api_config.dart';
 import 'package:toktok/auth/register_verify_email.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterEmail extends StatelessWidget {
   final String emailAddress;
 
   const RegisterEmail({super.key, required this.emailAddress});
+
+  Future<bool> sendEmail() async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.emailRegCodeUrl),
+        body: {'email': emailAddress},
+      );
+
+      if (response.statusCode == 200) {
+        //  print("Email sent successfully: ${response.body}");
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +36,7 @@ class RegisterEmail extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
           child: Column(
             children: [
-              const SizedBox(
-                height: 150,
-              ),
+              const SizedBox(height: 150),
               const Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -34,12 +52,21 @@ class RegisterEmail extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.grey),
               ),
-              const SizedBox(
-                height: 50,
-              ),
+              const SizedBox(height: 50),
               InkWell(
-                onTap: () {
-                  Get.to(RegisterVerifyEmail(emailAddress: emailAddress));
+                onTap: () async {
+                  bool success = await sendEmail();
+                  if (success) {
+                    Get.to(RegisterVerifyEmail(emailAddress: emailAddress));
+                  } else {
+                    Get.snackbar(
+                      "Error",
+                      "Failed to send verification code",
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
+                  }
                 },
                 child: Card(
                   child: Padding(
@@ -47,11 +74,8 @@ class RegisterEmail extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.email,
-                          size: 50,
-                          color: Colors.greenAccent,
-                        ),
+                        const Icon(Icons.email,
+                            size: 50, color: Colors.greenAccent),
                         const SizedBox(width: 5),
                         Expanded(
                           child: Column(
@@ -82,21 +106,19 @@ class RegisterEmail extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.arrow_back,
-                    size: 20,
-                    color: Colors.greenAccent,
-                  ),
+                  const Icon(Icons.arrow_back,
+                      size: 20, color: Colors.greenAccent),
                   InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: const Text(
-                        '  Back',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.greenAccent),
-                      ))
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: const Text(
+                      '  Back',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.greenAccent),
+                    ),
+                  ),
                 ],
               )
             ],

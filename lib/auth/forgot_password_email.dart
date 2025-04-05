@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:toktok/api_config.dart';
+import 'package:http/http.dart' as http;
+import 'package:toktok/auth/forgot_password_code.dart';
 
 class ForgotPasswordPageEmail extends StatelessWidget {
   final String emailAddress;
@@ -7,6 +10,24 @@ class ForgotPasswordPageEmail extends StatelessWidget {
 
   ForgotPasswordPageEmail({super.key, required this.emailAddress}) {
     _contactController.text = emailAddress;
+  }
+
+  Future<bool> sendEmail() async {
+    try {
+      final response = await http.post(
+        Uri.parse(ApiConfig.emailPasswordCodeUrl),
+        body: {'email': _contactController.text},
+      );
+
+      if (response.statusCode == 200) {
+        //  print("Email sent successfully: ${response.body}");
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
   }
 
   @override
@@ -53,17 +74,24 @@ class ForgotPasswordPageEmail extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                'We will send the instructions to reset your password through this email',
+                'We will send you the password reset code through this email address',
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 50),
               ElevatedButton(
-                onPressed: () {
-                  Get.snackbar(
-                    'Check your Email',
-                    'Password reset link has been sent there',
-                    snackPosition: SnackPosition.TOP,
-                  );
+                onPressed: () async {
+                  bool success = await sendEmail();
+                  if (success) {
+                    Get.to(EmailPasswordRestCode(emailAddress: emailAddress));
+                  } else {
+                    Get.snackbar(
+                      "Error",
+                      "Failed to send the password reset code",
+                      snackPosition: SnackPosition.BOTTOM,
+                      backgroundColor: Colors.red,
+                      colorText: Colors.white,
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50),
@@ -73,7 +101,7 @@ class ForgotPasswordPageEmail extends StatelessWidget {
                   ),
                 ),
                 child: const Text(
-                  'Reset Password',
+                  'Request Code',
                   style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
