@@ -115,6 +115,7 @@ flutter:
     - assets/icon/download.svg
     - assets/icon/comment.svg
     - assets/icon/question.svg
+    - assets/icon/jgot.png
 
   #   - images/a_dot_ham.jpeg
 

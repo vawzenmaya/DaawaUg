@@ -172,19 +172,17 @@ class _SignInPageState extends State<SignInPage> {
           child: Column(
             children: [
               const SizedBox(height: 100),
-              const Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'DaawaTok',
-                    style: TextStyle(
-                        color: Colors.greenAccent,
-                        fontSize: 50,
-                        fontWeight: FontWeight.w400),
+                  Image.asset(
+                    'assets/icon/jgot.png',
+                    width: 200,
+                    height: 200,
                   ),
                 ],
               ),
-              const SizedBox(height: 80),
+              const SizedBox(height: 70),
               const Row(
                 children: [
                   Text(

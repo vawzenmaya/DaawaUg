@@ -112,20 +112,18 @@ class _SignUpPageState extends State<SignUpPage> {
               const SizedBox(
                 height: 100,
               ),
-              const Row(
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    'DaawaTok',
-                    style: TextStyle(
-                        color: Colors.greenAccent,
-                        fontSize: 50,
-                        fontWeight: FontWeight.w400),
+                  Image.asset(
+                    'assets/icon/jgot.png',
+                    width: 200,
+                    height: 200,
                   ),
                 ],
               ),
               const SizedBox(
-                height: 80,
+                height: 70,
               ),
               const Row(
                 children: [
