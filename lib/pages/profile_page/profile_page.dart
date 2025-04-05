@@ -11,6 +11,7 @@ import 'package:toktok/pages/profile_page/drawer.dart';
 import 'package:toktok/pages/profile_page/edit_profile.dart';
 import 'package:toktok/pages/profile_page/followers_page.dart';
 import 'package:toktok/pages/profile_page/payment_details.dart';
+import 'package:toktok/pages/profile_page/privacy_policies_page.dart';
 import 'package:toktok/pages/profile_page/tab_videos.dart';
 import 'package:toktok/pages/profile_page/tab_favorites.dart';
 import 'package:toktok/pages/profile_page/tab_liked.dart';
@@ -221,7 +222,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             "Privacy",
                             style: TextStyle(color: Colors.black),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const PrivacyPoliciesPage()),
+                            );
+                          },
                         ),
                         ListTile(
                           leading: const Icon(
@@ -440,7 +446,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: Container(
                       decoration: BoxDecoration(
                           color: Colors.greenAccent,
-                          border: Border.all(color: Colors.greenAccent),
+                          border: Border.all(color: const Color.fromARGB(255, 208, 233, 221)),
                           borderRadius: BorderRadius.circular(5)),
                       child: const Padding(
                         padding: EdgeInsets.all(10.0),

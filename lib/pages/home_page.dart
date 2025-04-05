@@ -71,6 +71,24 @@ class Video {
   }
 }
 
+class VideoService {
+  VideoPlayerController? _controller;
+
+  void setController(VideoPlayerController controller) {
+    _controller = controller;
+  }
+
+  void pause() {
+    _controller?.pause();
+  }
+
+  void play() {
+    _controller?.play();
+  }
+}
+
+final VideoService videoService = VideoService();
+
 class Comment {
   final int commentId;
   final int userId;
@@ -187,7 +205,7 @@ class _HomePageState extends State<HomePage> {
                   })
                 },
                 child: Text(
-                  "Following",
+                  "Trending",
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         fontSize: !_isForYouSelected ? 18 : 15,
                         color: !_isForYouSelected ? Colors.white : Colors.grey,
@@ -204,6 +222,7 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
                 child: IconButton(
                   onPressed: () {
+                    videoService.pause();
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const SearchPage()),

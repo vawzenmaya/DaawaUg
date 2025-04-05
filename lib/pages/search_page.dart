@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:toktok/api_config.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -8,127 +11,110 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final List<String> _searchHistory = [
-    'Haji Mansor',
-    'Lauren',
-    'Dubai',
-  ];
+  List<dynamic> videos = [];
+  List<dynamic> channels = [];
+  List<dynamic> filteredResults = [];
+  TextEditingController searchController = TextEditingController();
+  bool isLoading = true;
 
-  final List<String> _youMayLike = [
-    'Daawa Tok',
-    'Kutuba',
-    'Janah',
-    'Jumah',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    searchController.addListener(_filterResults);
+  }
 
-  List<String> _filteredResults = [];
-  String _searchQuery = '';
+  @override
+  void dispose() {
+    searchController.removeListener(_filterResults);
+    searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> fetchData() async {
+    try {
+      final videoResponse = await http.get(Uri.parse(ApiConfig.fetchVideosUrl));
+      final channelResponse =
+          await http.get(Uri.parse(ApiConfig.fetchChannelsUrl));
+
+      if (videoResponse.statusCode == 200 &&
+          channelResponse.statusCode == 200) {
+        setState(() {
+          videos = json.decode(videoResponse.body);
+          channels = json.decode(channelResponse.body);
+          filteredResults = [...videos, ...channels];
+          isLoading = false;
+        });
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      // Handle the exception
+      // ignore: avoid_print
+      print('Error fetching data: $e');
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  void _filterResults() {
+    String query = searchController.text.toLowerCase();
+    setState(() {
+      filteredResults = [
+        ...videos.where((video) {
+          return (video['title']?.toLowerCase() ?? '').contains(query) ||
+              (video['description']?.toLowerCase() ?? '').contains(query);
+        }),
+        ...channels.where((channel) {
+          return (channel['channelName']?.toLowerCase() ?? '').contains(query);
+        })
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: TextField(
-          decoration: const InputDecoration(
-            hintText: 'Search',
-            prefixIcon: Icon(Icons.search),
-          ),
-          onChanged: (query) {
-            setState(() {
-              _searchQuery = query;
-              _filteredResults = _youMayLike
-                  .where((like) =>
-                      like.toLowerCase().contains(query.toLowerCase()))
-                  .toList();
-            });
-          },
-          onSubmitted: (query) {
-            setState(() {
-              if (!_searchHistory.contains(query) && query.isNotEmpty) {
-                _searchHistory.add(query);
-              }
-              _searchQuery = query;
-              _filteredResults = _youMayLike
-                  .where((like) =>
-                      like.toLowerCase().contains(query.toLowerCase()))
-                  .toList();
-            });
-          },
-        ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // Add settings functionality here
-            },
-            icon: const Icon(Icons.settings),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Search History',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ..._searchHistory.map((history) {
-                return ListTile(
-                  leading: const Icon(Icons.history),
-                  title: Text(history),
-                  trailing: IconButton(
+          controller: searchController,
+          decoration: InputDecoration(
+            hintText: 'Search videos or channels',
+            prefixIcon: const Icon(Icons.search),
+            suffixIcon: searchController.text.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.clear),
                     onPressed: () {
                       setState(() {
-                        _searchHistory.remove(history);
+                        searchController.clear();
                       });
                     },
-                    icon: const Icon(Icons.close),
-                  ),
-                  onTap: () {
-                    setState(() {
-                      _searchQuery = history;
-                      _filteredResults = _youMayLike
-                          .where((like) => like
-                              .toLowerCase()
-                              .contains(history.toLowerCase()))
-                          .toList();
-                    });
-                  },
-                );
-              }).toList(),
-              const SizedBox(height: 32),
-              const Text(
-                'You may like',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (_searchQuery.isEmpty)
-                ..._youMayLike.map((like) {
-                  return ListTile(
-                    leading: const Icon(Icons.favorite),
-                    title: Text(like),
-                  );
-                }).toList()
-              else
-                ..._filteredResults.map((result) {
-                  return ListTile(
-                    leading: const Icon(Icons.search),
-                    title: Text(result),
-                  );
-                }).toList(),
-            ],
+                  )
+                : null,
           ),
         ),
       ),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : filteredResults.isEmpty
+              ? const Center(child: Text('No results found'))
+              : ListView.builder(
+                  itemCount: filteredResults.length,
+                  itemBuilder: (context, index) {
+                    final result = filteredResults[index];
+                    return ListTile(
+                      leading: result['videoId'] != null
+                          ? const Icon(Icons.video_library)
+                          : const Icon(Icons.donut_small),
+                      title:
+                          Text(result['title'] ?? result['channelName'] ?? ''),
+                      subtitle: Text(result['description'] ??
+                          result['channelDescription'] ??
+                          ''),
+                    );
+                  },
+                ),
     );
   }
 }
